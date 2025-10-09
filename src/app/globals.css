@@ -1,1 +1,33 @@
 @import 'tailwindcss';
+/* styles/globals.css */
+.menu-item-active {
+  @apply bg-teal-500 text-white;
+}
+
+.menu-item-inactive {
+  @apply text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+.menu-item-icon-active {
+  @apply text-white;
+}
+
+.menu-item-icon-inactive {
+  @apply text-gray-600;
+}
+
+.menu-dropdown-item-active {
+  @apply bg-teal-500 text-white;
+}
+
+.menu-dropdown-item-inactive {
+  @apply text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+.menu-dropdown-badge-active {
+  @apply text-white;
+}
+
+.menu-dropdown-badge-inactive {
+  @apply text-gray-400;
+}

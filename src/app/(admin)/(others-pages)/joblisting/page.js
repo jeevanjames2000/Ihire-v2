@@ -19,7 +19,6 @@ import {
 import { fetchCategories } from '../../../../store/categoriesSlice.js';
 
 const Page = () => {
-    console.log("hjsdbghjzsdgfsdgv")
   const dispatch = useDispatch();
  const router=useRouter()
 
@@ -114,9 +113,8 @@ dispatch(
   };
 
   const handleEdit = (job) => {
-    console.log('Editing job:', job);
-    router.push(`/empposting/${job.id}`, { state: { job } });
-  };
+    router.push(`/empposting/${job.id}?title=${encodeURIComponent(job.title)}`);
+ };
 
   const handleToggleStatus = async (id, currentStatus) => {
     try {
