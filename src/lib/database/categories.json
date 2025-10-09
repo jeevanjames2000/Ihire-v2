@@ -1,0 +1,66 @@
+[
+  {
+    "slug": "software-engineering",
+    "title": "Software Engineering",
+    "icon": "Code",
+    "color": "from-blue-500 to-indigo-600",
+    "jobs": "12K+"
+  },
+  {
+    "slug": "marketing",
+    "title": "Marketing & Sales",
+    "icon": "BarChart3",
+    "color": "from-pink-500 to-rose-600",
+    "jobs": "8K+"
+  },
+  {
+    "slug": "design",
+    "title": "Design & Creative",
+    "icon": "Zap",
+    "color": "from-yellow-500 to-orange-600",
+    "jobs": "5K+"
+  },
+  {
+    "slug": "hr",
+    "title": "HR & Operations",
+    "icon": "Users",
+    "color": "from-green-500 to-emerald-600",
+    "jobs": "3K+"
+  },
+  {
+    "slug": "sales",
+    "title": "Sales",
+    "icon": "TrendingUp",
+    "color": "from-purple-500 to-violet-600",
+    "jobs": "6K+"
+  },
+  {
+    "slug": "finance",
+    "title": "Finance",
+    "icon": "DollarSign",
+    "color": "from-red-500 to-pink-600",
+    "jobs": "4K+"
+  },
+
+  {
+    "slug": "product-management",
+    "title": "Product Management",
+    "icon": "Package",
+    "color": "from-teal-500 to-cyan-600",
+    "jobs": "7K+"
+  },
+  {
+    "slug": "data-science",
+    "title": "Data Science",
+    "icon": "Database",
+    "color": "from-indigo-500 to-purple-600",
+    "jobs": "9K+"
+  },
+  {
+    "slug": "devops",
+    "title": "DevOps",
+    "icon": "Server",
+    "color": "from-orange-500 to-red-600",
+    "jobs": "5K+"
+  }
+]

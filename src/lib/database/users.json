@@ -1,0 +1,262 @@
+[
+  {
+    "id": 1,
+    "name": "Mike Johnson",
+    "avatar": "https://i.pravatar.cc/150?u=0",
+    "role": "Product Manager",
+    "location": "Toronto, Canada",
+    "bio": "Experienced product manager with 5+ years in the industry.",
+    "skills": [
+      "SEO",
+      "SEO",
+      "React"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Chris Lee",
+    "avatar": "https://i.pravatar.cc/150?u=1",
+    "role": "HR Specialist",
+    "location": "New York, NY",
+    "bio": "Experienced hr specialist with 5+ years in the industry.",
+    "skills": [
+      "SEO",
+      "UI/UX",
+      "Python"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Mike Johnson",
+    "avatar": "https://i.pravatar.cc/150?u=2",
+    "role": "HR Specialist",
+    "location": "Chicago, IL",
+    "bio": "Experienced hr specialist with 5+ years in the industry.",
+    "skills": [
+      "Python",
+      "SEO",
+      "React"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "David Brown",
+    "avatar": "https://i.pravatar.cc/150?u=3",
+    "role": "Product Manager",
+    "location": "Boston, MA",
+    "bio": "Experienced product manager with 5+ years in the industry.",
+    "skills": [
+      "React",
+      "React",
+      "SEO"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Mike Johnson",
+    "avatar": "https://i.pravatar.cc/150?u=4",
+    "role": "Software Engineer",
+    "location": "Sydney, Australia",
+    "bio": "Experienced designer with 5+ years in the industry.",
+    "skills": [
+      "Python",
+      "Python",
+      "UI/UX"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Jane Smith",
+    "avatar": "https://i.pravatar.cc/150?u=5",
+    "role": "HR Specialist",
+    "location": "Remote",
+    "bio": "Experienced product manager with 5+ years in the industry.",
+    "skills": [
+      "Python",
+      "SEO",
+      "Python"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Emily Davis",
+    "avatar": "https://i.pravatar.cc/150?u=6",
+    "role": "HR Specialist",
+    "location": "Remote",
+    "bio": "Experienced software engineer with 5+ years in the industry.",
+    "skills": [
+      "UI/UX",
+      "Python",
+      "UI/UX"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "David Brown",
+    "avatar": "https://i.pravatar.cc/150?u=7",
+    "role": "Software Engineer",
+    "location": "Bangalore, India",
+    "bio": "Experienced marketer with 5+ years in the industry.",
+    "skills": [
+      "React",
+      "React",
+      "React"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Robert Garcia",
+    "avatar": "https://i.pravatar.cc/150?u=8",
+    "role": "Product Manager",
+    "location": "Remote",
+    "bio": "Experienced hr specialist with 5+ years in the industry.",
+    "skills": [
+      "UI/UX",
+      "React",
+      "React"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Sarah Wilson",
+    "avatar": "https://i.pravatar.cc/150?u=9",
+    "role": "Product Manager",
+    "location": "London, UK",
+    "bio": "Experienced designer with 5+ years in the industry.",
+    "skills": [
+      "Salesforce",
+      "React",
+      "Python"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Anna Taylor",
+    "avatar": "https://i.pravatar.cc/150?u=10",
+    "role": "Software Engineer",
+    "location": "Austin, TX",
+    "bio": "Experienced marketer with 5+ years in the industry.",
+    "skills": [
+      "React",
+      "UI/UX",
+      "Salesforce"
+    ]
+  },
+  {
+    "id": 12,
+    "name": "John Doe",
+    "avatar": "https://i.pravatar.cc/150?u=11",
+    "role": "HR Specialist",
+    "location": "Chicago, IL",
+    "bio": "Experienced marketer with 5+ years in the industry.",
+    "skills": [
+      "Python",
+      "UI/UX",
+      "SEO"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Sarah Wilson",
+    "avatar": "https://i.pravatar.cc/150?u=12",
+    "role": "Marketer",
+    "location": "Berlin, Germany",
+    "bio": "Experienced software engineer with 5+ years in the industry.",
+    "skills": [
+      "Python",
+      "React",
+      "Salesforce"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "John Doe",
+    "avatar": "https://i.pravatar.cc/150?u=13",
+    "role": "Software Engineer",
+    "location": "Toronto, Canada",
+    "bio": "Experienced designer with 5+ years in the industry.",
+    "skills": [
+      "Salesforce",
+      "Python",
+      "UI/UX"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Chris Lee",
+    "avatar": "https://i.pravatar.cc/150?u=14",
+    "role": "HR Specialist",
+    "location": "Austin, TX",
+    "bio": "Experienced product manager with 5+ years in the industry.",
+    "skills": [
+      "UI/UX",
+      "SEO",
+      "Python"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Sarah Wilson",
+    "avatar": "https://i.pravatar.cc/150?u=15",
+    "role": "Product Manager",
+    "location": "Los Angeles, CA",
+    "bio": "Experienced software engineer with 5+ years in the industry.",
+    "skills": [
+      "SEO",
+      "SEO",
+      "Python"
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Anna Taylor",
+    "avatar": "https://i.pravatar.cc/150?u=16",
+    "role": "Software Engineer",
+    "location": "Remote",
+    "bio": "Experienced product manager with 5+ years in the industry.",
+    "skills": [
+      "SEO",
+      "Python",
+      "SEO"
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Anna Taylor",
+    "avatar": "https://i.pravatar.cc/150?u=17",
+    "role": "HR Specialist",
+    "location": "London, UK",
+    "bio": "Experienced product manager with 5+ years in the industry.",
+    "skills": [
+      "UI/UX",
+      "UI/UX",
+      "Salesforce"
+    ]
+  },
+  {
+    "id": 19,
+    "name": "John Doe",
+    "avatar": "https://i.pravatar.cc/150?u=18",
+    "role": "HR Specialist",
+    "location": "San Francisco, CA",
+    "bio": "Experienced software engineer with 5+ years in the industry.",
+    "skills": [
+      "SEO",
+      "UI/UX",
+      "React"
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Emily Davis",
+    "avatar": "https://i.pravatar.cc/150?u=19",
+    "role": "Marketer",
+    "location": "Toronto, Canada",
+    "bio": "Experienced designer with 5+ years in the industry.",
+    "skills": [
+      "Python",
+      "Salesforce",
+      "SEO"
+    ]
+  }
+]

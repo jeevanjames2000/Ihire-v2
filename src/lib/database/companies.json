@@ -1,0 +1,812 @@
+[
+  {
+    "id": 1,
+    "name": "Google",
+    "logo": "https://logo.clearbit.com/google.com",
+    "description": "Google is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "1-50",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 2,
+    "name": "Apple",
+    "logo": "https://logo.clearbit.com/apple.com",
+    "description": "Apple is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "51-200",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 3,
+    "name": "Meta",
+    "logo": "https://logo.clearbit.com/meta.com",
+    "description": "Meta is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "501-1000",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 4,
+    "name": "Microsoft",
+    "logo": "https://logo.clearbit.com/microsoft.com",
+    "description": "Microsoft is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "201-500",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 5,
+    "name": "Amazon",
+    "logo": "https://logo.clearbit.com/amazon.com",
+    "description": "Amazon is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "1000+",
+    "location": "Bangalore, India"
+  },
+  {
+    "id": 6,
+    "name": "Netflix",
+    "logo": "https://logo.clearbit.com/netflix.com",
+    "description": "Netflix is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 7,
+    "name": "Tesla",
+    "logo": "https://logo.clearbit.com/tesla.com",
+    "description": "Tesla is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "501-1000",
+    "location": "Los Angeles, CA"
+  },
+  {
+    "id": 8,
+    "name": "Uber",
+    "logo": "https://logo.clearbit.com/uber.com",
+    "description": "Uber is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "501-1000",
+    "location": "Los Angeles, CA"
+  },
+  {
+    "id": 9,
+    "name": "Airbnb",
+    "logo": "https://logo.clearbit.com/airbnb.com",
+    "description": "Airbnb is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "51-200",
+    "location": "Remote"
+  },
+  {
+    "id": 10,
+    "name": "Spotify",
+    "logo": "https://logo.clearbit.com/spotify.com",
+    "description": "Spotify is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "1000+",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 11,
+    "name": "Adobe",
+    "logo": "https://logo.clearbit.com/adobe.com",
+    "description": "Adobe is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "501-1000",
+    "location": "London, UK"
+  },
+  {
+    "id": 12,
+    "name": "Salesforce",
+    "logo": "https://logo.clearbit.com/salesforce.com",
+    "description": "Salesforce is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1000+",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 13,
+    "name": "Oracle",
+    "logo": "https://logo.clearbit.com/oracle.com",
+    "description": "Oracle is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "201-500",
+    "location": "Toronto, Canada"
+  },
+  {
+    "id": 14,
+    "name": "IBM",
+    "logo": "https://logo.clearbit.com/ibm.com",
+    "description": "IBM is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "London, UK"
+  },
+  {
+    "id": 15,
+    "name": "Intel",
+    "logo": "https://logo.clearbit.com/intel.com",
+    "description": "Intel is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "51-200",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 16,
+    "name": "NVIDIA",
+    "logo": "https://logo.clearbit.com/nvidia.com",
+    "description": "NVIDIA is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "51-200",
+    "location": "Cupertino, CA"
+  },
+  {
+    "id": 17,
+    "name": "Cisco",
+    "logo": "https://logo.clearbit.com/cisco.com",
+    "description": "Cisco is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "Bangalore, India"
+  },
+  {
+    "id": 18,
+    "name": "Adobe",
+    "logo": "https://logo.clearbit.com/adobe.com",
+    "description": "Adobe is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "1000+",
+    "location": "Cupertino, CA"
+  },
+  {
+    "id": 19,
+    "name": "SAP",
+    "logo": "https://logo.clearbit.com/sap.com",
+    "description": "SAP is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "201-500",
+    "location": "San Francisco, CA"
+  },
+  {
+    "id": 20,
+    "name": "VMware",
+    "logo": "https://logo.clearbit.com/vmware.com",
+    "description": "VMware is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "501-1000",
+    "location": "Boston, MA"
+  },
+  {
+    "id": 21,
+    "name": "HubSpot",
+    "logo": "https://logo.clearbit.com/hubspot.com",
+    "description": "HubSpot is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1-50",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 22,
+    "name": "Dropbox",
+    "logo": "https://logo.clearbit.com/dropbox.com",
+    "description": "Dropbox is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1000+",
+    "location": "Seattle, WA"
+  },
+  {
+    "id": 23,
+    "name": "Slack",
+    "logo": "https://logo.clearbit.com/slack.com",
+    "description": "Slack is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "51-200",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 24,
+    "name": "Zoom",
+    "logo": "https://logo.clearbit.com/zoom.com",
+    "description": "Zoom is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1000+",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 25,
+    "name": "Twilio",
+    "logo": "https://logo.clearbit.com/twilio.com",
+    "description": "Twilio is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "1000+",
+    "location": "San Francisco, CA"
+  },
+  {
+    "id": 26,
+    "name": "Stripe",
+    "logo": "https://logo.clearbit.com/stripe.com",
+    "description": "Stripe is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1000+",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 27,
+    "name": "Square",
+    "logo": "https://logo.clearbit.com/square.com",
+    "description": "Square is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1-50",
+    "location": "New York, NY"
+  },
+  {
+    "id": 28,
+    "name": "PayPal",
+    "logo": "https://logo.clearbit.com/paypal.com",
+    "description": "PayPal is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "Los Angeles, CA"
+  },
+  {
+    "id": 29,
+    "name": "Shopify",
+    "logo": "https://logo.clearbit.com/shopify.com",
+    "description": "Shopify is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1-50",
+    "location": "Austin, TX"
+  },
+  {
+    "id": 30,
+    "name": "Etsy",
+    "logo": "https://logo.clearbit.com/etsy.com",
+    "description": "Etsy is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "1-50",
+    "location": "Boston, MA"
+  },
+  {
+    "id": 31,
+    "name": "Google",
+    "logo": "https://logo.clearbit.com/google.com",
+    "description": "Google is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "201-500",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 32,
+    "name": "Apple",
+    "logo": "https://logo.clearbit.com/apple.com",
+    "description": "Apple is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "51-200",
+    "location": "Seattle, WA"
+  },
+  {
+    "id": 33,
+    "name": "Meta",
+    "logo": "https://logo.clearbit.com/meta.com",
+    "description": "Meta is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "501-1000",
+    "location": "Seattle, WA"
+  },
+  {
+    "id": 34,
+    "name": "Microsoft",
+    "logo": "https://logo.clearbit.com/microsoft.com",
+    "description": "Microsoft is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "201-500",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 35,
+    "name": "Amazon",
+    "logo": "https://logo.clearbit.com/amazon.com",
+    "description": "Amazon is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "51-200",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 36,
+    "name": "Netflix",
+    "logo": "https://logo.clearbit.com/netflix.com",
+    "description": "Netflix is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "51-200",
+    "location": "San Francisco, CA"
+  },
+  {
+    "id": 37,
+    "name": "Tesla",
+    "logo": "https://logo.clearbit.com/tesla.com",
+    "description": "Tesla is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "501-1000",
+    "location": "London, UK"
+  },
+  {
+    "id": 38,
+    "name": "Uber",
+    "logo": "https://logo.clearbit.com/uber.com",
+    "description": "Uber is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "1000+",
+    "location": "Toronto, Canada"
+  },
+  {
+    "id": 39,
+    "name": "Airbnb",
+    "logo": "https://logo.clearbit.com/airbnb.com",
+    "description": "Airbnb is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "501-1000",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 40,
+    "name": "Spotify",
+    "logo": "https://logo.clearbit.com/spotify.com",
+    "description": "Spotify is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1-50",
+    "location": "London, UK"
+  },
+  {
+    "id": 41,
+    "name": "Adobe",
+    "logo": "https://logo.clearbit.com/adobe.com",
+    "description": "Adobe is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "501-1000",
+    "location": "Cupertino, CA"
+  },
+  {
+    "id": 42,
+    "name": "Salesforce",
+    "logo": "https://logo.clearbit.com/salesforce.com",
+    "description": "Salesforce is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "51-200",
+    "location": "New York, NY"
+  },
+  {
+    "id": 43,
+    "name": "Oracle",
+    "logo": "https://logo.clearbit.com/oracle.com",
+    "description": "Oracle is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "London, UK"
+  },
+  {
+    "id": 44,
+    "name": "IBM",
+    "logo": "https://logo.clearbit.com/ibm.com",
+    "description": "IBM is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "51-200",
+    "location": "Cupertino, CA"
+  },
+  {
+    "id": 45,
+    "name": "Intel",
+    "logo": "https://logo.clearbit.com/intel.com",
+    "description": "Intel is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "51-200",
+    "location": "Austin, TX"
+  },
+  {
+    "id": 46,
+    "name": "NVIDIA",
+    "logo": "https://logo.clearbit.com/nvidia.com",
+    "description": "NVIDIA is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1000+",
+    "location": "Toronto, Canada"
+  },
+  {
+    "id": 47,
+    "name": "Cisco",
+    "logo": "https://logo.clearbit.com/cisco.com",
+    "description": "Cisco is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "201-500",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 48,
+    "name": "Adobe",
+    "logo": "https://logo.clearbit.com/adobe.com",
+    "description": "Adobe is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "201-500",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 49,
+    "name": "SAP",
+    "logo": "https://logo.clearbit.com/sap.com",
+    "description": "SAP is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "1-50",
+    "location": "New York, NY"
+  },
+  {
+    "id": 50,
+    "name": "VMware",
+    "logo": "https://logo.clearbit.com/vmware.com",
+    "description": "VMware is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1-50",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 51,
+    "name": "HubSpot",
+    "logo": "https://logo.clearbit.com/hubspot.com",
+    "description": "HubSpot is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "51-200",
+    "location": "Seattle, WA"
+  },
+  {
+    "id": 52,
+    "name": "Dropbox",
+    "logo": "https://logo.clearbit.com/dropbox.com",
+    "description": "Dropbox is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 53,
+    "name": "Slack",
+    "logo": "https://logo.clearbit.com/slack.com",
+    "description": "Slack is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1-50",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 54,
+    "name": "Zoom",
+    "logo": "https://logo.clearbit.com/zoom.com",
+    "description": "Zoom is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "201-500",
+    "location": "Cupertino, CA"
+  },
+  {
+    "id": 55,
+    "name": "Twilio",
+    "logo": "https://logo.clearbit.com/twilio.com",
+    "description": "Twilio is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "51-200",
+    "location": "Los Angeles, CA"
+  },
+  {
+    "id": 56,
+    "name": "Stripe",
+    "logo": "https://logo.clearbit.com/stripe.com",
+    "description": "Stripe is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "1000+",
+    "location": "New York, NY"
+  },
+  {
+    "id": 57,
+    "name": "Square",
+    "logo": "https://logo.clearbit.com/square.com",
+    "description": "Square is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "201-500",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 58,
+    "name": "PayPal",
+    "logo": "https://logo.clearbit.com/paypal.com",
+    "description": "PayPal is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1-50",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 59,
+    "name": "Shopify",
+    "logo": "https://logo.clearbit.com/shopify.com",
+    "description": "Shopify is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "51-200",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 60,
+    "name": "Etsy",
+    "logo": "https://logo.clearbit.com/etsy.com",
+    "description": "Etsy is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "51-200",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 61,
+    "name": "Google",
+    "logo": "https://logo.clearbit.com/google.com",
+    "description": "Google is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "501-1000",
+    "location": "New York, NY"
+  },
+  {
+    "id": 62,
+    "name": "Apple",
+    "logo": "https://logo.clearbit.com/apple.com",
+    "description": "Apple is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "51-200",
+    "location": "Austin, TX"
+  },
+  {
+    "id": 63,
+    "name": "Meta",
+    "logo": "https://logo.clearbit.com/meta.com",
+    "description": "Meta is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "201-500",
+    "location": "San Francisco, CA"
+  },
+  {
+    "id": 64,
+    "name": "Microsoft",
+    "logo": "https://logo.clearbit.com/microsoft.com",
+    "description": "Microsoft is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "501-1000",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 65,
+    "name": "Amazon",
+    "logo": "https://logo.clearbit.com/amazon.com",
+    "description": "Amazon is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "501-1000",
+    "location": "Los Angeles, CA"
+  },
+  {
+    "id": 66,
+    "name": "Netflix",
+    "logo": "https://logo.clearbit.com/netflix.com",
+    "description": "Netflix is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "1000+",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 67,
+    "name": "Tesla",
+    "logo": "https://logo.clearbit.com/tesla.com",
+    "description": "Tesla is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "51-200",
+    "location": "Boston, MA"
+  },
+  {
+    "id": 68,
+    "name": "Uber",
+    "logo": "https://logo.clearbit.com/uber.com",
+    "description": "Uber is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1000+",
+    "location": "Cupertino, CA"
+  },
+  {
+    "id": 69,
+    "name": "Airbnb",
+    "logo": "https://logo.clearbit.com/airbnb.com",
+    "description": "Airbnb is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1000+",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 70,
+    "name": "Spotify",
+    "logo": "https://logo.clearbit.com/spotify.com",
+    "description": "Spotify is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "Austin, TX"
+  },
+  {
+    "id": 71,
+    "name": "Adobe",
+    "logo": "https://logo.clearbit.com/adobe.com",
+    "description": "Adobe is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1-50",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 72,
+    "name": "Salesforce",
+    "logo": "https://logo.clearbit.com/salesforce.com",
+    "description": "Salesforce is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "51-200",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 73,
+    "name": "Oracle",
+    "logo": "https://logo.clearbit.com/oracle.com",
+    "description": "Oracle is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1000+",
+    "location": "Los Angeles, CA"
+  },
+  {
+    "id": 74,
+    "name": "IBM",
+    "logo": "https://logo.clearbit.com/ibm.com",
+    "description": "IBM is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "1000+",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 75,
+    "name": "Intel",
+    "logo": "https://logo.clearbit.com/intel.com",
+    "description": "Intel is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "501-1000",
+    "location": "Los Angeles, CA"
+  },
+  {
+    "id": 76,
+    "name": "NVIDIA",
+    "logo": "https://logo.clearbit.com/nvidia.com",
+    "description": "NVIDIA is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 77,
+    "name": "Cisco",
+    "logo": "https://logo.clearbit.com/cisco.com",
+    "description": "Cisco is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "501-1000",
+    "location": "Toronto, Canada"
+  },
+  {
+    "id": 78,
+    "name": "Adobe",
+    "logo": "https://logo.clearbit.com/adobe.com",
+    "description": "Adobe is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "51-200",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 79,
+    "name": "SAP",
+    "logo": "https://logo.clearbit.com/sap.com",
+    "description": "SAP is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "1-50",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 80,
+    "name": "VMware",
+    "logo": "https://logo.clearbit.com/vmware.com",
+    "description": "VMware is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "1-50",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 81,
+    "name": "HubSpot",
+    "logo": "https://logo.clearbit.com/hubspot.com",
+    "description": "HubSpot is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1000+",
+    "location": "New York, NY"
+  },
+  {
+    "id": 82,
+    "name": "Dropbox",
+    "logo": "https://logo.clearbit.com/dropbox.com",
+    "description": "Dropbox is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "201-500",
+    "location": "Bangalore, India"
+  },
+  {
+    "id": 83,
+    "name": "Slack",
+    "logo": "https://logo.clearbit.com/slack.com",
+    "description": "Slack is a leading technology company specializing in innovative solutions.",
+    "industry": "Media",
+    "size": "501-1000",
+    "location": "Remote"
+  },
+  {
+    "id": 84,
+    "name": "Zoom",
+    "logo": "https://logo.clearbit.com/zoom.com",
+    "description": "Zoom is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1000+",
+    "location": "Boston, MA"
+  },
+  {
+    "id": 85,
+    "name": "Twilio",
+    "logo": "https://logo.clearbit.com/twilio.com",
+    "description": "Twilio is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1-50",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 86,
+    "name": "Stripe",
+    "logo": "https://logo.clearbit.com/stripe.com",
+    "description": "Stripe is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "51-200",
+    "location": "Chicago, IL"
+  },
+  {
+    "id": 87,
+    "name": "Square",
+    "logo": "https://logo.clearbit.com/square.com",
+    "description": "Square is a leading technology company specializing in innovative solutions.",
+    "industry": "Finance",
+    "size": "201-500",
+    "location": "Redmond, WA"
+  },
+  {
+    "id": 88,
+    "name": "PayPal",
+    "logo": "https://logo.clearbit.com/paypal.com",
+    "description": "PayPal is a leading technology company specializing in innovative solutions.",
+    "industry": "Tech",
+    "size": "1-50",
+    "location": "London, UK"
+  },
+  {
+    "id": 89,
+    "name": "Shopify",
+    "logo": "https://logo.clearbit.com/shopify.com",
+    "description": "Shopify is a leading technology company specializing in innovative solutions.",
+    "industry": "Retail",
+    "size": "1-50",
+    "location": "New York, NY"
+  },
+  {
+    "id": 90,
+    "name": "Etsy",
+    "logo": "https://logo.clearbit.com/etsy.com",
+    "description": "Etsy is a leading technology company specializing in innovative solutions.",
+    "industry": "Healthcare",
+    "size": "1-50",
+    "location": "Remote"
+  }
+]
