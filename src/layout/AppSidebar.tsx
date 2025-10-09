@@ -32,35 +32,36 @@ const navItems: NavItem[] = [
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
-  {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
+    {
+    icon: <UserCircleIcon />,
+    name: "Job Listings",
+    path: "/joblisting",
   },
   {
     icon: <UserCircleIcon />,
-    name: "User Profile",
+    name: "Post a job",
+    path: "/profile",
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Applicants",
     path: "/profile",
   },
 
+  
   {
-    name: "Forms",
-    icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+    icon: <UserCircleIcon />,
+    name: "Company Profile",
+    path: "/profile",
   },
-  {
-    name: "Tables",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  },
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-    ],
-  },
+
+ 
+  // {
+  //   name: "Tables",
+  //   icon: <TableIcon />,
+  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+  // },
+  
 ];
 
 const othersItems: NavItem[] = [
