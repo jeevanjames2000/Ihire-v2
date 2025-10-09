@@ -1,0 +1,36 @@
+{
+  "buttons": {
+    "primary": {
+      "bg": "from-[#48adb9]",
+      "to": "to-[#3a929d]",
+      "bgHover": "from-[#3a929d]",
+      "toHover": "to-[#2c7d84]",
+      "text": "text-white",
+      "textbg":"#48adb9",
+       "hoverText": "hover:text-slate-900"
+    },
+    "secondary": {
+      "bg": "from-gray-500",
+      "to": "to-gray-700",
+      "bgHover": "from-gray-600",
+      "toHover": "to-gray-800",
+      "text": "text-white"
+    },
+    "ghost": {
+      "text": "text-slate-600",
+      "hoverText": "hover:text-slate-900"
+    }
+  },
+  "logo": {
+    "bg": "#48adb9",
+    "text": "text-white"
+  },
+  "text": {
+    "primary": "text-slate-900",
+    "secondary": "text-slate-500"
+  },
+  "background": {
+    "primary": "bg-white",
+    "secondary": "bg-slate-50"
+  }
+}

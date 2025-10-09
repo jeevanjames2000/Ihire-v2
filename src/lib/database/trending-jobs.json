@@ -1,0 +1,90 @@
+[
+{
+"id": 1,
+"title": "Principal Designer",
+"company": "Twilio",
+"logo": "https://logo.clearbit.com/twilio.com",
+"location": "Cupertino, CA",
+"salary": "$160k - $210k",
+"description": "Conduct user interviews and usability testing.",
+"type": "Part-time",
+"category": "software-engineering"
+},
+{
+"id": 2,
+"title": "Senior Designer",
+"company": "Microsoft",
+"logo": "https://logo.clearbit.com/microsoft.com",
+"location": "Seattle, WA",
+"salary": "$100k - $140k",
+"description": "Build scalable web applications using modern technologies.",
+"type": "Full-time",
+"category": "software-engineering"
+},
+{
+"id": 3,
+"title": "Junior Engineer",
+"company": "Netflix",
+"logo": "https://logo.clearbit.com/netflix.com",
+"location": "Toronto, Canada",
+"salary": "$150k - $200k",
+"description": "Lead product development and collaborate with cross-functional teams.",
+"type": "Full-time",
+"category": "software-engineering"
+},
+{
+"id": 9,
+"title": "Principal Designer",
+"company": "Etsy",
+"logo": "https://logo.clearbit.com/etsy.com",
+"location": "Cupertino, CA",
+"salary": "$160k - $210k",
+"description": "Create engaging content for digital marketing campaigns.",
+"type": "Contract",
+"category": "software-engineering"
+},
+{
+"id": 10,
+"title": "Principal Designer",
+"company": "Microsoft",
+"logo": "https://logo.clearbit.com/microsoft.com",
+"location": "Los Angeles, CA",
+"salary": "$100k - $140k",
+"description": "Create engaging content for digital marketing campaigns.",
+"type": "Contract",
+"category": "software-engineering"
+},
+{
+"id": 11,
+"title": "Lead Analyst",
+"company": "Airbnb",
+"logo": "https://logo.clearbit.com/airbnb.com",
+"location": "Seattle, WA",
+"salary": "$110k - $150k",
+"description": "Design intuitive user interfaces and conduct user research.",
+"type": "Full-time",
+"category": "software-engineering"
+},
+{
+"id": 12,
+"title": "Junior Analyst",
+"company": "Square",
+"logo": "https://logo.clearbit.com/square.com",
+"location": "Seattle, WA",
+"salary": "$130k - $170k",
+"description": "Source and interview candidates for various roles.",
+"type": "Contract",
+"category": "software-engineering"
+},
+{
+"id": 13,
+"title": "Principal Developer",
+"company": "Dropbox",
+"logo": "https://logo.clearbit.com/etsy.com",
+"location": "San Francisco, CA",
+"salary": "$130k - $170k",
+"description": "Analyze large datasets to drive business insights.",
+"type": "Freelance",
+"category": "software-engineering"
+}
+]
