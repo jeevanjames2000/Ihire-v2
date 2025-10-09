@@ -106,7 +106,7 @@ const CreateJob = () => {
       });
       setErrors({});
       dispatch(clearAddJobState());
-      router.push("/joblistings");
+      router.push("/joblisting");
     }
     if (addJobError) {
       const errorMessage = addJobError.message || addJobError.data?.error || "Failed to create job.";
@@ -554,7 +554,7 @@ const CreateJob = () => {
           <div className="flex justify-end gap-4 mt-8">
             <Button
               type="button"
-              onClick={() => router.push("/joblistings")}
+              onClick={() => router.push("/joblisting")}
               disabled={jobsStatus === "loading"}
               variant="outline"
             >

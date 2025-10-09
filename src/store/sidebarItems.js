@@ -24,7 +24,7 @@ export const candidateSidebarItems = [
 // Employee Sidebar
 export const employeeSidebarItems = [
   { icon: FaHome, label: "Dashboard", path: "/empdashboard" },
-  { icon: FaBriefcase, label: "Job Listings", path: "/joblistings" },
+  { icon: FaBriefcase, label: "Job Listings", path: "/joblisting" },
   { icon: FaPlusCircle, label: "Post a Job", path: "/empposting" },
   { icon: FaUsers, label: "Applicants",   path: "/applicants"},
 

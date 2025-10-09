@@ -6,8 +6,9 @@ import {
   fetchApplicantsByJob,
   clearApplicantsState,
   updateApplicantStatus,
-} from '../../store/jobsSlice';
+} from '@/store/jobsSlice';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FaSearch, FaList, FaTh } from 'react-icons/fa';
 
 // Applicant Row Component
@@ -243,13 +244,13 @@ const ApplicantCard = ({ applicant, showJobId, onAction }) => (
 );
 
 // Main Component
-const JobApplicants = ({ initialApplicants = [] }) => {
+const JobApplicants = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { jobId } = useParams();
+  const { id: jobId } = useParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('table');
-  const [localApplicants, setLocalApplicants] = useState(initialApplicants);
+  const [localApplicants, setLocalApplicants] = useState([]);
   const fetchedRef = useRef(false);
 
   const { userInfo, userType } = useSelector((state) => state.user || {});
@@ -258,14 +259,14 @@ const JobApplicants = ({ initialApplicants = [] }) => {
 
   useEffect(() => {
     if (fetchedRef.current) return;
-    // if (!userInfo?.token || userType !== 'employer') {
-    //   toast.error('Please log in as an employer to view applicants', {
-    //     position: 'top-right',
-    //     autoClose: 3000,
-    //   });
-    //   router.push('/login');
-    //   return;
-    // }
+    if (!userInfo?.token || userType !== 'employer') {
+      toast.error('Please log in as an employer to view applicants', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      router.push('/login?type=employer');
+      return;
+    }
 
     fetchedRef.current = true;
     dispatch(clearApplicantsState());
@@ -324,7 +325,7 @@ const JobApplicants = ({ initialApplicants = [] }) => {
   };
 
   const filteredApplicants = useMemo(() => {
-    return localApplicants.filter((applicant) =>
+    return normalizedApplicants.filter((applicant) =>
       [
         applicant.fullName,
         applicant.email,
@@ -336,17 +337,7 @@ const JobApplicants = ({ initialApplicants = [] }) => {
         applicant.university,
       ].some((field) => field?.toLowerCase().includes(searchTerm.toLowerCase()))
     );
-  }, [localApplicants, searchTerm]);
-
-//   if (!userInfo?.token || userType !== 'employer') {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center">
-//         <p className="text-red-600 text-lg">
-//           Access denied: Only employers can view applicants.
-//         </p>
-//       </div>
-//     );
-//   }
+  }, [normalizedApplicants, searchTerm]);
 
   if (applicantsStatus === 'loading') {
     return <p className="text-gray-600 text-lg">Loading applicants...</p>;
@@ -453,25 +444,5 @@ const JobApplicants = ({ initialApplicants = [] }) => {
     </div>
   );
 };
-
-// Server-side data fetching
-export async function getServerSideProps({ params }) {
-  const { jobId } = params;
-  let initialApplicants = [];
-
-  try {
-    const response = await fetch(`http://localhost:3000/api/applicants/${jobId}`);
-    if (!response.ok) throw new Error('Failed to fetch applicants');
-    initialApplicants = await response.json();
-  } catch (error) {
-    console.error('Failed to fetch applicants:', error);
-  }
-
-  return {
-    props: {
-      initialApplicants,
-    },
-  };
-}
 
 export default JobApplicants;

@@ -6,7 +6,7 @@ import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import React from "react";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }) {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   const mainContentMargin = isMobileOpen

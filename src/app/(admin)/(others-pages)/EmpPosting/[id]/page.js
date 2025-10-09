@@ -1,13 +1,14 @@
+"use client"
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter, useParams } from 'next/navigation';
-import { updateJob, deleteJob, clearUpdateJobState, clearDeleteJobState } from '../../store/jobsSlice';
-import { fetchCategories, fetchSubcategories, fetchSkills } from '../../store/categoriesSlice';
+import { updateJob, deleteJob, clearUpdateJobState, clearDeleteJobState } from '../../../../../store/jobsSlice';
+import { fetchCategories, fetchSubcategories, fetchSkills } from '../../../../../store/categoriesSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import Select from 'react-select';
-import axios from 'axios';
 
-const EditJob = ({ initialJob = {} }) => {
+
+const EditJob = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { id } = useParams();
@@ -32,28 +33,23 @@ const EditJob = ({ initialJob = {} }) => {
   const { userInfo = null, userType = null } = useSelector((state) => state.user || {});
 
   const [formData, setFormData] = useState({
-    title: initialJob.title || '',
-    company_name: initialJob.company_name || '',
-    location: initialJob.location || '',
-    description: initialJob.description || '',
-    category_id: initialJob.category_id || '',
-    category_name: initialJob.category_name || '',
-    subcategory_id: initialJob.subcategory_id || '',
-    subcategory_name: initialJob.subcategory_name || '',
-    salary: initialJob.salary || 0,
-    type: initialJob.type || '',
-    experience: initialJob.experience || '',
-    deadline: initialJob.deadline
-      ? new Date(initialJob.deadline).toISOString().split('T')[0]
-      : '',
-    skills: Array.isArray(initialJob.skills) ? initialJob.skills : [],
-    status: initialJob.status || 'Active',
-    contactPerson: initialJob.contactPerson || '',
-    role: initialJob.role || '',
-    startDate: initialJob.startDate
-      ? new Date(initialJob.startDate).toISOString().split('T')[0]
-      : '',
-    vacancies: initialJob.vacancies || 1,
+    title:  '',
+    company_name:  '',
+    location:  '',
+    description:  '',
+    category_id:  '',
+    category_name:  '',
+    subcategory_id:  '',
+    subcategory_name:  '',
+    salary:  0,
+    type: '',
+    experience:  '',
+    deadline: "",
+    skills:[],
+    status:"",
+    contactPerson: '',
+    role:  '',
+    startDate: ""
   });
   const [errors, setErrors] = useState({});
   const [isDeleting, setIsDeleting] = useState(false);
@@ -84,54 +80,54 @@ const EditJob = ({ initialJob = {} }) => {
     }
   }, [dispatch, formData.category_id]);
 
-  useEffect(() => {
-    if (id && initialJob && Object.keys(initialJob).length > 0 && skillsStatus === 'succeeded' && skills.length > 0) {
-      const category = categories.find((cat) => cat.id === initialJob.category_id);
-      const subcategory = subcategories.find((sub) => sub.id === initialJob.subcategory_id);
-      const validSkills = Array.isArray(initialJob.skills)
-        ? initialJob.skills.filter((skill) => skills.includes(skill))
-        : [];
-      console.log('Initializing formData for job:', {
-        jobId: initialJob.id,
-        jobSkills: initialJob.skills,
-        skills,
-        validSkills,
-      });
-      setFormData({
-        title: initialJob.title || '',
-        company_name: initialJob.company_name || '',
-        location: initialJob.location || '',
-        description: initialJob.description || '',
-        category_id: category ? String(category.id) : '',
-        category_name: category ? category.name : '',
-        subcategory_id: subcategory ? String(subcategory.id) : '',
-        subcategory_name: subcategory ? subcategory.name : '',
-        salary: initialJob.salary || 0,
-        type: initialJob.type || '',
-        experience: initialJob.experience || '',
-        deadline: initialJob.deadline && !isNaN(new Date(initialJob.deadline))
-          ? new Date(initialJob.deadline).toISOString().split('T')[0]
-          : '',
-        skills: validSkills,
-        status: initialJob.status || 'Active',
-        contactPerson: initialJob.contactPerson || '',
-        role: initialJob.role || '',
-        startDate: initialJob.startDate && !isNaN(new Date(initialJob.startDate))
-          ? new Date(initialJob.startDate).toISOString().split('T')[0]
-          : '',
-        vacancies: initialJob.vacancies || 1,
-      });
-      if (category && !subcategories.length && formData.category_id) {
-        dispatch(fetchSubcategories(category.id));
-      }
-    }
-  }, [id, initialJob, categories, subcategories, dispatch, skills, skillsStatus]);
+  // useEffect(() => {
+  //   if (id && initialJob && Object.keys(initialJob).length > 0 && skillsStatus === 'succeeded' && skills.length > 0) {
+  //     const category = categories.find((cat) => cat.id === initialJob.category_id);
+  //     const subcategory = subcategories.find((sub) => sub.id === initialJob.subcategory_id);
+  //     const validSkills = Array.isArray(initialJob.skills)
+  //       ? initialJob.skills.filter((skill) => skills.includes(skill))
+  //       : [];
+  //     console.log('Initializing formData for job:', {
+  //       jobId: initialJob.id,
+  //       jobSkills: initialJob.skills,
+  //       skills,
+  //       validSkills,
+  //     });
+  //     setFormData({
+  //       title: initialJob.title || '',
+  //       company_name: initialJob.company_name || '',
+  //       location: initialJob.location || '',
+  //       description: initialJob.description || '',
+  //       category_id: category ? String(category.id) : '',
+  //       category_name: category ? category.name : '',
+  //       subcategory_id: subcategory ? String(subcategory.id) : '',
+  //       subcategory_name: subcategory ? subcategory.name : '',
+  //       salary: initialJob.salary || 0,
+  //       type: initialJob.type || '',
+  //       experience: initialJob.experience || '',
+  //       deadline: initialJob.deadline && !isNaN(new Date(initialJob.deadline))
+  //         ? new Date(initialJob.deadline).toISOString().split('T')[0]
+  //         : '',
+  //       skills: validSkills,
+  //       status: initialJob.status || 'Active',
+  //       contactPerson: initialJob.contactPerson || '',
+  //       role: initialJob.role || '',
+  //       startDate: initialJob.startDate && !isNaN(new Date(initialJob.startDate))
+  //         ? new Date(initialJob.startDate).toISOString().split('T')[0]
+  //         : '',
+  //       vacancies: initialJob.vacancies || 1,
+  //     });
+  //     if (category && !subcategories.length && formData.category_id) {
+  //       dispatch(fetchSubcategories(category.id));
+  //     }
+  //   }
+  // }, [id, initialJob, categories, subcategories, dispatch, skills, skillsStatus]);
 
   useEffect(() => {
     if (updateJobSuccess) {
       toast.success('Job updated successfully.', { position: 'top-right', autoClose: 3000 });
       dispatch(clearUpdateJobState());
-      router.push('/joblistings');
+      router.push('/joblisting');
     }
     if (updateJobError) {
       const errorMessage = updateJobError.message || updateJobError.data?.error || 'Failed to update job.';
@@ -141,7 +137,7 @@ const EditJob = ({ initialJob = {} }) => {
     if (deleteJobSuccess) {
       toast.success('Job deleted successfully.', { position: 'top-right', autoClose: 3000 });
       dispatch(clearDeleteJobState());
-      router.push('/joblistings');
+      router.push('/joblisting');
     }
     if (deleteJobError) {
       const errorMessage = deleteJobError.message || deleteJobError.data?.error || 'Failed to delete job.';
@@ -622,7 +618,7 @@ const EditJob = ({ initialJob = {} }) => {
             <div className="flex justify-end gap-4 mt-8">
               <button
                 type="button"
-                onClick={() => router.push('/joblistings')}
+                onClick={() => router.push('/joblisting')}
                 disabled={jobsStatus === 'loading' || isDeleting}
                 className="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-all focus:ring-2 focus:ring-gray-400 focus:outline-none disabled:bg-gray-400 disabled:cursor-not-allowed"
               >

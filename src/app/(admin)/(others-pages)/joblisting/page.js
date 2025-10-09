@@ -34,6 +34,7 @@ const Page = () => {
   jobsStatus = 'idle',
   jobsError = null,
 } = useSelector((state) => state.jobs || {});
+
 const {
   categories = [],
   status: categoriesStatus = 'idle',
@@ -113,7 +114,8 @@ dispatch(
   };
 
   const handleEdit = (job) => {
-    router.push(`/empposting/${job.id}?title=${encodeURIComponent(job.title)}`);
+    console.log("job",job)
+    router.push(`/EmpPosting/${job.id}`);
  };
 
   const handleToggleStatus = async (id, currentStatus) => {
