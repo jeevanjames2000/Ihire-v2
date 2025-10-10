@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true, 
   },
   images: {
-    domains: ["logo.clearbit.com"],
+  domains: ["logo.clearbit.com", "via.placeholder.com","placehold.co"],
   },
   webpack(config) {
     config.module.rules.push({
