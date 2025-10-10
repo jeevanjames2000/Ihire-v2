@@ -8,15 +8,12 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import jobData from '@/lib/database/jobs.json';
-
 export default function CompanyProfile({ params }) {
   const { id } = React.use(params);
   const router = useRouter();
   const [savedCompanies, setSavedCompanies] = useState(new Set());
   const [cachedCompanies, setCachedCompanies] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Cache company data
   useEffect(() => {
     const cacheKey = 'companies';
     const cached = localStorage.getItem(cacheKey);
@@ -51,22 +48,17 @@ export default function CompanyProfile({ params }) {
       setLoading(false);
     }
   }, []);
-
   const companies = useMemo(() => cachedCompanies || [], [cachedCompanies]);
-
-  // Single company data
   const company = useMemo(() => {
     if (id === 'all') return null;
     return companies.find((c) => c.id === id);
   }, [id, companies]);
-
   const companyJobs = useMemo(() => {
     if (id === 'all') return [];
     return Object.values(jobData)
       .flat()
       .filter((j) => (j.companyId || j.company.toLowerCase().replace(/\s+/g, '-')) === id);
   }, [id]);
-
   const toggleSaveCompany = (companyId) => {
     setSavedCompanies((prev) => {
       const newSet = new Set(prev);
@@ -78,7 +70,6 @@ export default function CompanyProfile({ params }) {
       return newSet;
     });
   };
-
   const toggleSaveJob = (jobId) => {
     setSavedCompanies((prev) => {
       const newSet = new Set(prev);
@@ -90,7 +81,6 @@ export default function CompanyProfile({ params }) {
       return newSet;
     });
   };
-
   if (loading) {
     return (
       <section className="min-h-screen bg-gray-100 py-16">
@@ -100,8 +90,6 @@ export default function CompanyProfile({ params }) {
       </section>
     );
   }
-
-  // Render all companies view
   if (id === 'all') {
     return (
       <section className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-16">
@@ -114,7 +102,6 @@ export default function CompanyProfile({ params }) {
           >
             All Companies
           </motion.h2>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {companies.map((company, index) => (
               <motion.div
@@ -172,10 +159,7 @@ export default function CompanyProfile({ params }) {
       </section>
     );
   }
-
-  // Render single company view
   if (!company) return notFound();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -196,7 +180,6 @@ export default function CompanyProfile({ params }) {
             <h1 className="text-xl font-bold text-gray-800 hidden sm:block">{company.name}</h1>
           </div>
         </div>
-
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <Card className="bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg rounded-xl overflow-hidden">
