@@ -1,7 +1,5 @@
 import React from "react";
 import Image from "next/image";
-
-// Custom Logo Component (simulating shadcn approach)
 const Logo: React.FC = () => {
   return (
     <div className="bg-[#48adb9] text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold p-2 rounded inline-block">
@@ -9,17 +7,16 @@ const Logo: React.FC = () => {
     </div>
   );
 };
-
 const Footer: React.FC = () => {
   return (
     <footer
       className="bg-gradient-to-r from-[#48adb9] to-[#2a6b73] text-white font-sans relative py-8 sm:py-10 lg:py-14 min-h-[250px] sm:min-h-[300px] md:min-h-[350px] lg:min-h-[400px] xl:min-h-[500px] flex flex-col"
     >
-      {/* Minimal overlay for mobile to enhance clarity */}
+      {}
       <div className="absolute inset-0 bg-black/0 sm:bg-black/5 md:bg-black/5"></div>
-      {/* Wrapper */}
+      {}
       <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row justify-between gap-10 px-4 sm:px-6 md:px-8 flex-1">
-        {/* Left Side - Image */}
+        {}
         <div className="hidden lg:block lg:w-1/3 xl:w-1/4">
           <Image
             src="/jobseeker.jpg"
@@ -30,10 +27,9 @@ const Footer: React.FC = () => {
             priority
           />
         </div>
-
-        {/* Right Side - Links */}
+        {}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {/* Brand + Resources */}
+          {}
           <div>
             <Logo className="mb-2 sm:mb-3" />
             <div>
@@ -42,9 +38,9 @@ const Footer: React.FC = () => {
                 "Find Jobs",
                 "Upload Resume",
                 "Career Advice",
-                "Salary Tools",
+                
                 "Job Alerts",
-                "Resume Builder",
+               
               ].map((item) => (
                 <a
                   key={item}
@@ -56,8 +52,7 @@ const Footer: React.FC = () => {
               ))}
             </div>
           </div>
-
-          {/* Employers */}
+          {}
           <div>
             <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">Employers</h3>
             {[
@@ -77,8 +72,7 @@ const Footer: React.FC = () => {
               </a>
             ))}
           </div>
-
-          {/* Company Info */}
+          {}
           <div>
             <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">Company</h3>
             {[
@@ -100,13 +94,11 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer Bottom */}
+      {}
       <div className="text-center border-t border-white/20 mt-6 sm:mt-8 pt-4 sm:pt-4 text-xs sm:text-sm text-gray-200">
         © 2025 iHire Job Portal Inc. | Terms of Service | Privacy Policy | Cookie Policy | Support
       </div>
     </footer>
   );
 };
-
 export default Footer;
