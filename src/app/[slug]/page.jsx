@@ -222,7 +222,7 @@ export default function JobListings({ params }) {
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-2 space-y-3 lg:max-h-[calc(100vh-280px)] lg:overflow-y-auto lg:pr-2 custom-scrollbar">
+          <div className="lg:col-span-2 space-y-3 lg:max-h-screen lg:overflow-y-auto lg:pr-2 custom-scrollbar">
             {filteredJobs.map((job, index) => (
               <div
                 key={job.id}
@@ -306,7 +306,6 @@ export default function JobListings({ params }) {
               </div>
             ))}
           </div>
-
           <div className="lg:col-span-3">
             {selectedJob ? (
               <div className="bg-white rounded-2xl border border-slate-200 shadow-xl sticky top-[200px] overflow-hidden">
@@ -316,7 +315,7 @@ export default function JobListings({ params }) {
 
                 <div className="relative px-8 pb-6">
                   <div className="flex items-start gap-5 -mt-12 mb-6">
-                    <img
+                    <img  
                       src={selectedJob.logo}
                       alt={selectedJob.company}
                       className="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg bg-white"
@@ -372,7 +371,7 @@ export default function JobListings({ params }) {
                     </div>
                   </div>
 
-                  <div className="max-h-[calc(100vh-550px)] overflow-y-auto custom-scrollbar pr-2">
+                  <div className="max-h-[calc(100vh)] overflow-y-auto custom-scrollbar pr-2">
                     <div className="prose max-w-none">
                       <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 mb-6 border border-slate-200">
                         <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
