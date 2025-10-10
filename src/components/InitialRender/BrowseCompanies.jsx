@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -47,75 +47,94 @@ export default function BrowseCompanies() {
   const companies = useMemo(() => cachedCompanies || [], [cachedCompanies]);
   if (loading) {
     return (
-      <section className="py-20 bg-gradient-to-b from-white to-slate-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center">Loading companies...</div>
+      <section className="py-16 bg-gray-100">
+        <div className="container mx-auto px-6">
+          <div className="text-center text-gray-600">Loading companies...</div>
         </div>
       </section>
     );
   }
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-slate-50">
-      <div className="container mx-auto px-4">
+    <section className="py-16 bg-gradient-to-br from-gray-100 to-gray-200">
+      <div className="container mx-auto px-6">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800"
         >
-          Browse by Companies
+          Discover Top Companies
         </motion.h2>
-        <motion.div
-          className="grid md:grid-cols-3 lg:grid-cols-4 gap-6"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ staggerChildren: 0.05 }}
-        >
-          {companies.slice(0, 8).map((company, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {companies.slice(0, 9).map((company, index) => (
             <motion.div
               key={company.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              whileHover={{ scale: 1.02, y: -5 }}
               onClick={() => router.push(`/companies/${company.id}`)}
               className="cursor-pointer"
             >
-              <Card className="h-full border-none shadow-lg overflow-hidden group">
-                <CardHeader className="pb-4">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-r from-blue-50 to-cyan-50">
+              <Card className="relative h-full bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden">
+                {}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardHeader className="flex items-center space-x-4 p-6">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                     <Image
                       src={company.logo}
                       alt={`${company.name} logo`}
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-contain"
+                      width={48}
+                      height={48}
+                      className="object-contain"
                       onError={(e) => {
-                        e.target.src = `https://via.placeholder.com/40?text=${company.name.charAt(0)}`;
+                        e.target.src = `https://via.placeholder.com/48?text=${company.name.charAt(0)}`;
                       }}
                     />
                   </div>
-                  <CardTitle className="text-xl font-semibold text-slate-800 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
-                    {company.name}
-                  </CardTitle>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">{company.name}</h3>
+                    <p className="text-sm text-gray-500 truncate">{company.location}</p>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-slate-500 flex items-center gap-2">
-                    <Briefcase className="h-4 w-4" /> {company.jobs} Openings
-                  </p>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-[#48adb9] mt-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/companies/${company.id}`);
-                    }}
-                  >
-                    Explore
-                  </Button>
+                <CardContent className="p-6 pt-0">
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{company.description}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-gray-600 text-sm flex items-center gap-2">
+                      <Briefcase className="h-4 w-4" /> {company.jobs} Openings
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="text-sm text-blue-600 border-blue-600 hover:bg-blue-50 transition-colors duration-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/companies/${company.id}`);
+                      }}
+                    >
+                      View Jobs
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
+        {companies.length > 9 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mt-12"
+          >
+            <Button
+              variant="default"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => router.push('/companies')}
+            >
+              See All Companies
+            </Button>
+          </motion.div>
+        )}
       </div>
     </section>
   );

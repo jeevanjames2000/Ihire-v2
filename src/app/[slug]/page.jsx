@@ -18,7 +18,7 @@ import {
 import jobData from '@/lib/database/jobs.json';
 export default function JobListings({ params }) {
   const { slug } =  React.use(params);
-  const cleanSlug = slug.replace('-jobs', '');
+  const cleanSlug = slug ? slug.replace('-jobs', '') : '';
   const [cachedJobs, setCachedJobs] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedJobId, setSelectedJobId] = useState(null);
@@ -29,25 +29,19 @@ export default function JobListings({ params }) {
   const [showFilters, setShowFilters] = useState(false);
   const [savedJobs, setSavedJobs] = useState(new Set());
   useEffect(() => {
-    const cacheKey = `jobs_${cleanSlug}`;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
-      const parsedJobs = JSON.parse(cached);
-      setCachedJobs(parsedJobs);
-      if (parsedJobs.length > 0) {
-        setSelectedJobId(parsedJobs[0].id);
-      }
-      setLoading(false);
+  const cacheKey = `jobs_${cleanSlug}`;
+  const cached = localStorage.getItem(cacheKey);
+    let jobsToLoad = [];
+    if (cleanSlug === 'jobs') {
+      jobsToLoad = Object.values(jobData).flat();
     } else {
-      const jobs = jobData[cleanSlug] || [];
-      setCachedJobs(jobs);
-      if (jobs.length > 0) {
-        setSelectedJobId(jobs[0].id);
-      }
-      localStorage.setItem(cacheKey, JSON.stringify(jobs));
-      setLoading(false);
+      jobsToLoad = jobData[cleanSlug] || [];
     }
-  }, [cleanSlug]);
+    setCachedJobs(jobsToLoad);
+    if (jobsToLoad.length > 0) setSelectedJobId(jobsToLoad[0].id);
+    localStorage.setItem(cacheKey, JSON.stringify(jobsToLoad));
+    setLoading(false);
+}, [cleanSlug]);
   const jobs = useMemo(() => cachedJobs || [], [cachedJobs]);
   const uniqueTypes = useMemo(() => [...new Set(jobs.map(job => job.type))], [jobs]);
   const uniqueLocations = useMemo(() => [...new Set(jobs.map(job => job.location))], [jobs]);
@@ -122,7 +116,8 @@ export default function JobListings({ params }) {
   <div className="flex items-center justify-between mb-4">
     <div>
       <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 capitalize">
-        {cleanSlug.replace(/-/g, ' ')} Jobs
+        {cleanSlug === 'jobs'
+      ? "" : cleanSlug.replace(/-/g, ' ')} Jobs
       </h1>
       <p className="text-sm text-slate-600 mt-1 flex items-center gap-2">
         <TrendingUp className="h-4 w-4" />

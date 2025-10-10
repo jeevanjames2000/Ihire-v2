@@ -17,7 +17,7 @@ export default function CompanyProfile({ params }) {
       name: job.company,
       logo: job.logo,
       banner: job.companyBanner || 'https://via.placeholder.com/1200x200?text=Company+Banner',
-      description: job.companyDescription || `Join ${job.company} to work on exciting projects!`,
+      description: job.description || `Join ${job.company} to work on exciting projects!`,
       about: job.companyAbout || `${job.company} is a leading company in its industry, dedicated to innovation and excellence.`,
       location: job.companyLocation || job.location,
       website: job.companyWebsite || `https://${job.company.toLowerCase().replace(/\s+/g, '')}.com`,
@@ -114,9 +114,10 @@ export default function CompanyProfile({ params }) {
                     <div className="flex gap-3">
                       <Button
                         className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300"
-                        asChild
+                       
                       >
-                        <a href={company.website} target="_blank" rel="noopener noreferrer">
+                                             <a href={company.website} target="_blank" rel="noopener noreferrer">
+
                           Visit Website
                         </a>
                       </Button>
