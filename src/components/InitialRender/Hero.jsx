@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter for navigation
-import { useDispatch } from 'react-redux'; // Import useDispatch for Redux
+import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Briefcase, Building2, DollarSign, Clock, Code, BarChart3, TrendingUp, Users } from 'lucide-react';
@@ -12,13 +12,13 @@ import { Zap, Settings, Package, Database, Server } from 'lucide-react';
 import { setSearchTerm } from '@/store/SearchSlice';
 
 export default function Hero() {
-  const [searchTerm, setLocalSearchTerm] = useState(''); // Local state for input
+  const [searchTerm, setLocalSearchTerm] = useState('');
   const [open, setOpen] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const containerRef = useRef(null);
-  const router = useRouter(); // Initialize router
-  const dispatch = useDispatch(); // Initialize dispatch
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const commonActions = [
     { value: '/jobs', label: 'Jobs', icon: Briefcase },
@@ -84,50 +84,57 @@ export default function Hero() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    dispatch(setSearchTerm(searchTerm)); // Dispatch search term to Redux
+    dispatch(setSearchTerm(searchTerm));
     addToHistory(searchTerm);
     setOpen(false);
-    // Optionally navigate to a search results page
-    // router.push(`/jobs?search=${encodeURIComponent(searchTerm)}`);
+    router.push(`/jobs?search=${searchTerm}`);
   };
 
   const handleCommandSelect = (value) => {
     setOpen(false);
     if (value === '/jobs') {
-      dispatch(setSearchTerm('')); // Clear search term for general jobs page
-      router.push('/jobs'); // Navigate to /jobs
+      dispatch(setSearchTerm(''));
+      router.push('/jobs');
     } else if (value === '/companies') {
-      dispatch(setSearchTerm('')); // Clear search term for companies page
+      dispatch(setSearchTerm(''));
       router.push('/companies/all');
     } else if (value === '/profile') {
-      dispatch(setSearchTerm('')); // Clear search term for profile page
+      dispatch(setSearchTerm(''));
       router.push('/profile');
     }
   };
 
   const handleSelect = (item) => {
     setLocalSearchTerm(item.value);
-    dispatch(setSearchTerm(item.value)); // Update Redux store
+    dispatch(setSearchTerm(item.value));
     setOpen(false);
+    router.push(`/jobs?search=${item.value}`);
   };
 
   const handleHistorySelect = (term) => {
     setLocalSearchTerm(term);
-    dispatch(setSearchTerm(term)); // Update Redux store
+    dispatch(setSearchTerm(term));
     setOpen(false);
+    router.push(`/jobs?search=${term}`);
   };
 
   const handleMarqueeClick = (item) => {
     setLocalSearchTerm(item);
-    dispatch(setSearchTerm(item)); // Update Redux store
+    dispatch(setSearchTerm(item));
     setOpen(false);
+    router.push(`/jobs?search=${item}`);
   };
 
-  const handleCategoryClick = (label) => {
-    setLocalSearchTerm(label);
-    dispatch(setSearchTerm(label)); // Update Redux store
-    setOpen(false);
-  };
+const handleCategoryClick = (slug) => {
+  // Ensure slug is clean (optional safety)
+  const categoryKey = slug.toLowerCase().replace(/\s+/g, '-');
+
+  setLocalSearchTerm(slug);
+  dispatch(setSearchTerm(slug));
+  setOpen(false);
+  router.push(`/${categoryKey}-jobs?city=hyderabad`);
+};
+
 
   useEffect(() => {
     const hist = localStorage.getItem('searchHistory');
@@ -231,7 +238,7 @@ export default function Hero() {
                   value={searchTerm}
                   onChange={(e) => {
                     setLocalSearchTerm(e.target.value);
-                    dispatch(setSearchTerm(e.target.value)); // Update Redux store on input change
+                    dispatch(setSearchTerm(e.target.value));
                   }}
                   onFocus={() => setOpen(true)}
                   className="pl-12 pr-4 py-6 text-lg border-none bg-transparent focus-visible:ring-0 rounded-2xl w-full"
@@ -377,7 +384,7 @@ export default function Hero() {
             return (
               <button
                 key={category.title}
-                onClick={() => handleCategoryClick(category.title)}
+                onClick={() => handleCategoryClick(category.slug)}
                 className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300"
               >
                 <Icon className="h-4 w-4" />
