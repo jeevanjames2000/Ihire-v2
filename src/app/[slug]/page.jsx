@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   MapPin,
@@ -17,10 +16,9 @@ import {
   Users
 } from 'lucide-react';
 import jobData from '@/lib/database/jobs.json';
-
 export default function JobListings({ params }) {
   const { slug } =  React.use(params);
-  const cleanSlug = slug.replace('-jobs', '');
+  const cleanSlug = slug ? slug.replace('-jobs', '') : '';
   const [cachedJobs, setCachedJobs] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedJobId, setSelectedJobId] = useState(null);
@@ -30,51 +28,36 @@ export default function JobListings({ params }) {
   const [salaryRange, setSalaryRange] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [savedJobs, setSavedJobs] = useState(new Set());
-
   useEffect(() => {
-    const cacheKey = `jobs_${cleanSlug}`;
-    const cached = localStorage.getItem(cacheKey);
-
-    if (cached) {
-      const parsedJobs = JSON.parse(cached);
-      setCachedJobs(parsedJobs);
-      if (parsedJobs.length > 0) {
-        setSelectedJobId(parsedJobs[0].id);
-      }
-      setLoading(false);
+  const cacheKey = `jobs_${cleanSlug}`;
+  const cached = localStorage.getItem(cacheKey);
+    let jobsToLoad = [];
+    if (cleanSlug === 'jobs') {
+      jobsToLoad = Object.values(jobData).flat();
     } else {
-      const jobs = jobData[cleanSlug] || [];
-      
-      setCachedJobs(jobs);
-      if (jobs.length > 0) {
-        setSelectedJobId(jobs[0].id);
-      }
-      localStorage.setItem(cacheKey, JSON.stringify(jobs));
-      setLoading(false);
+      jobsToLoad = jobData[cleanSlug] || [];
     }
-  }, [cleanSlug]);
-
+    setCachedJobs(jobsToLoad);
+    if (jobsToLoad.length > 0) setSelectedJobId(jobsToLoad[0].id);
+    localStorage.setItem(cacheKey, JSON.stringify(jobsToLoad));
+    setLoading(false);
+}, [cleanSlug]);
   const jobs = useMemo(() => cachedJobs || [], [cachedJobs]);
-
   const uniqueTypes = useMemo(() => [...new Set(jobs.map(job => job.type))], [jobs]);
   const uniqueLocations = useMemo(() => [...new Set(jobs.map(job => job.location))], [jobs]);
   const uniqueCompanies = useMemo(() => [...new Set(jobs.map(job => job.company))], [jobs]);
-
   const parseSalary = (salary) => {
     const match = salary.match(/\$(\d+)k/);
     return match ? parseInt(match[1]) : 0;
   };
-
   const filteredJobs = useMemo(() => {
     return jobs.filter(job => {
       const matchesSearch =
         job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.description.toLowerCase().includes(searchQuery.toLowerCase());
-
       const matchesType = filterType === 'all' || job.type === filterType;
       const matchesLocation = !filterLocation || job.location.toLowerCase().includes(filterLocation.toLowerCase());
-
       let matchesSalary = true;
       if (salaryRange !== 'all') {
         const minSalary = parseSalary(job.salary);
@@ -82,23 +65,19 @@ export default function JobListings({ params }) {
         else if (salaryRange === '100-150') matchesSalary = minSalary >= 100 && minSalary < 150;
         else if (salaryRange === '150+') matchesSalary = minSalary >= 150;
       }
-
       return matchesSearch && matchesType && matchesLocation && matchesSalary;
     });
   }, [jobs, searchQuery, filterType, filterLocation, salaryRange]);
-
   const selectedJob = useMemo(() =>
     filteredJobs.find(job => job.id === selectedJobId) || jobs.find(job => job.id === selectedJobId),
     [selectedJobId, filteredJobs, jobs]
   );
-
   const clearFilters = () => {
     setSearchQuery('');
     setFilterType('all');
     setFilterLocation('');
     setSalaryRange('all');
   };
-
   const toggleSaveJob = (jobId) => {
     setSavedJobs(prev => {
       const newSet = new Set(prev);
@@ -110,9 +89,7 @@ export default function JobListings({ params }) {
       return newSet;
     });
   };
-
   const hasActiveFilters = searchQuery || filterType !== 'all' || filterLocation || salaryRange !== 'all';
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 flex items-center justify-center">
@@ -123,7 +100,6 @@ export default function JobListings({ params }) {
       </div>
     );
   }
-
   if (!jobs.length) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 flex items-center justify-center">
@@ -133,96 +109,92 @@ export default function JobListings({ params }) {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
       <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 capitalize">
-                {cleanSlug.replace(/-/g, ' ')} Jobs
-              </h1>
-              <p className="text-sm text-slate-600 mt-1 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                {filteredJobs.length} opportunities available
-              </p>
-            </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors"
-            >
-              <SlidersHorizontal className="h-4 w-4" />
-              Filters
-            </button>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search jobs, companies, or keywords..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-              />
-            </div>
-
-            <div className={`${showFilters ? 'flex' : 'hidden'} lg:flex flex-wrap gap-2`}>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              >
-                <option value="all">All Job Types</option>
-                {uniqueTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-
-              <select
-                value={salaryRange}
-                onChange={(e) => setSalaryRange(e.target.value)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              >
-                <option value="all">All Salaries</option>
-                <option value="0-100">Under $100k</option>
-                <option value="100-150">$100k - $150k</option>
-                <option value="150+">$150k+</option>
-              </select>
-
-              <input
-                type="text"
-                placeholder="Location"
-                value={filterLocation}
-                onChange={(e) => setFilterLocation(e.target.value)}
-                list="locations"
-                className="px-4 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-w-[150px]"
-              />
-              <datalist id="locations">
-                {uniqueLocations.map(loc => (
-                  <option key={loc} value={loc} />
-                ))}
-              </datalist>
-
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg flex items-center gap-2 transition-colors text-sm border border-slate-200"
-                >
-                  <X className="h-4 w-4" />
-                  Clear all
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+  <div className="flex items-center justify-between mb-4">
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 capitalize">
+        {cleanSlug === 'jobs'
+      ? "" : cleanSlug.replace(/-/g, ' ')} Jobs
+      </h1>
+      <p className="text-sm text-slate-600 mt-1 flex items-center gap-2">
+        <TrendingUp className="h-4 w-4" />
+        {filteredJobs.length} opportunities available
+      </p>
+    </div>
+    <button
+      onClick={() => setShowFilters(!showFilters)}
+      className="lg:hidden flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors text-sm"
+    >
+      <SlidersHorizontal className="h-4 w-4" />
+      Filters
+    </button>
+  </div>
+  <div className="flex flex-wrap items-center gap-2">
+    {}
+    <div className="relative flex-1 min-w-[200px]">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+      <input
+        type="text"
+        placeholder="Search jobs, companies, or keywords..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full pl-10 pr-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm"
+      />
+    </div>
+    {}
+    <div className={`${showFilters ? 'flex' : 'hidden'} lg:flex flex-wrap gap-2`}>
+      <select
+        value={filterType}
+        onChange={(e) => setFilterType(e.target.value)}
+        className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+      >
+        <option value="all">All Job Types</option>
+        {uniqueTypes.map(type => (
+          <option key={type} value={type}>{type}</option>
+        ))}
+      </select>
+      <select
+        value={salaryRange}
+        onChange={(e) => setSalaryRange(e.target.value)}
+        className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+      >
+        <option value="all">All Salaries</option>
+        <option value="0-100">Under $100k</option>
+        <option value="100-150">$100k - $150k</option>
+        <option value="150+">$150k+</option>
+      </select>
+      <input
+        type="text"
+        placeholder="Location"
+        value={filterLocation}
+        onChange={(e) => setFilterLocation(e.target.value)}
+        list="locations"
+        className="px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-w-[150px]"
+      />
+      <datalist id="locations">
+        {uniqueLocations.map(loc => (
+          <option key={loc} value={loc} />
+        ))}
+      </datalist>
+      {hasActiveFilters && (
+        <button
+          onClick={clearFilters}
+          className="px-3 py-2 text-slate-700 hover:bg-slate-100 rounded-lg flex items-center gap-1.5 transition-colors text-sm border border-slate-200"
+        >
+          <X className="h-4 w-4" />
+          Clear
+        </button>
+      )}
+    </div>
+  </div>
+</div>
       </div>
-
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-2 space-y-3 lg:max-h-screen lg:overflow-y-auto lg:pr-2 custom-scrollbar">
+          <div className="lg:col-span-2 space-y-3 lg:max-h-[150vh] lg:overflow-y-auto lg:pr-2 custom-scrollbar">
             {filteredJobs.map((job, index) => (
               <div
                 key={job.id}
@@ -274,7 +246,6 @@ export default function JobListings({ params }) {
                       <Bookmark className={`h-4 w-4 ${savedJobs.has(job.id) ? 'fill-current' : ''}`} />
                     </button>
                   </div>
-
                   <div className="space-y-2 mb-3">
                     <div className="flex items-center gap-4 text-xs text-slate-600">
                       <span className="flex items-center gap-1">
@@ -290,7 +261,6 @@ export default function JobListings({ params }) {
                       {job.description}
                     </p>
                   </div>
-
                   <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                     <div className="flex flex-wrap gap-2">
                       <span className="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-medium">
@@ -308,11 +278,10 @@ export default function JobListings({ params }) {
           </div>
           <div className="lg:col-span-3">
             {selectedJob ? (
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl sticky top-[200px] overflow-hidden">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl sticky top-0 overflow-hidden">
                 <div className="relative h-32 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500">
                   <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
                 </div>
-
                 <div className="relative px-8 pb-6">
                   <div className="flex items-start gap-5 -mt-12 mb-6">
                     <img  
@@ -332,7 +301,6 @@ export default function JobListings({ params }) {
                         <Building2 className="h-5 w-5" />
                         <span className="text-lg font-medium">{selectedJob.company}</span>
                       </div>
-
                       <div className="flex flex-wrap gap-2 mb-6">
                         <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-sm font-medium">
                           <MapPin className="h-4 w-4" />
@@ -351,7 +319,6 @@ export default function JobListings({ params }) {
                           15 applicants
                         </span>
                       </div>
-
                       <div className="flex gap-3">
                         <button className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300">
                           Apply Now
@@ -370,7 +337,6 @@ export default function JobListings({ params }) {
                       </div>
                     </div>
                   </div>
-
                   <div className="max-h-[calc(100vh)] overflow-y-auto custom-scrollbar pr-2">
                     <div className="prose max-w-none">
                       <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 mb-6 border border-slate-200">
@@ -383,7 +349,6 @@ export default function JobListings({ params }) {
                           <p>We are looking for a talented professional to join our team and help drive innovation. This role offers the opportunity to work with cutting-edge technologies and make a real impact.</p>
                         </div>
                       </div>
-
                       <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-xl p-6 mb-6 border border-slate-200">
                         <h3 className="text-lg font-bold text-slate-900 mb-3">Key Responsibilities</h3>
                         <ul className="space-y-2 text-slate-700">
@@ -405,7 +370,6 @@ export default function JobListings({ params }) {
                           </li>
                         </ul>
                       </div>
-
                       <div className="bg-gradient-to-br from-emerald-50 to-slate-50 rounded-xl p-6 border border-slate-200">
                         <h3 className="text-lg font-bold text-slate-900 mb-3">Requirements</h3>
                         <ul className="space-y-2 text-slate-700">
@@ -444,7 +408,6 @@ export default function JobListings({ params }) {
           </div>
         </div>
       </div>
-
       <style>{`
         @keyframes fade-in {
           from {
@@ -456,25 +419,20 @@ export default function JobListings({ params }) {
             transform: translateY(0);
           }
         }
-
         .animate-fade-in {
           animation: fade-in 0.5s ease-out forwards;
         }
-
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
           height: 6px;
         }
-
         .custom-scrollbar::-webkit-scrollbar-track {
           background: transparent;
         }
-
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
           border-radius: 3px;
         }
-
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
         }
