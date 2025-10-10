@@ -31,7 +31,7 @@ const Footer: React.FC = () => {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {}
           <div>
-            <Logo className="mb-2 sm:mb-3" />
+            <Logo  />
             <div>
               <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">Job Seekers</h3>
               {[
