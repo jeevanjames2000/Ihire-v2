@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
-import { User, Building2, ArrowLeft, ArrowRight } from "lucide-react";
+import { User, Building2, ArrowLeft, ArrowRight, Eye, EyeOff, X } from "lucide-react";
 
 export default function EmployerRegister() {
   const [step, setStep] = useState(1);
@@ -30,7 +29,16 @@ export default function EmployerRegister() {
   });
   const [logoFile, setLogoFile] = useState(null);
   const [bannerFile, setBannerFile] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+
+  // Cleanup for URL.createObjectURL
+  useEffect(() => {
+    return () => {
+      if (logoFile) URL.revokeObjectURL(URL.createObjectURL(logoFile));
+      if (bannerFile) URL.revokeObjectURL(URL.createObjectURL(bannerFile));
+    };
+  }, [logoFile, bannerFile]);
 
   useEffect(() => {
     if (step === 1 && userId) {
@@ -39,13 +47,14 @@ export default function EmployerRegister() {
           const response = await axios.get(`http://localhost:5000/api/employer/${userId}`);
           setUserData((prev) => ({
             ...prev,
-            name: response.data.name,
-            email: response.data.email,
-            designation: response.data.designation,
+            name: response.data.name || "",
+            email: response.data.email || "",
+            designation: response.data.designation || "",
           }));
           setIsUpdating(true);
         } catch (err) {
-          console.error('Fetch user data error:', err);
+          console.error("Fetch user data error:", err);
+          setError("Failed to fetch user data. Please try again.");
         }
       };
       fetchUserData();
@@ -62,10 +71,27 @@ export default function EmployerRegister() {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    if (name === "logo") {
-      setLogoFile(files[0]);
-    } else if (name === "banner") {
-      setBannerFile(files[0]);
+    if (files[0]) {
+      const validTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!validTypes.includes(files[0].type)) {
+        setError("Please upload a valid image (JPEG, PNG, or GIF).");
+        return;
+      }
+      if (name === "logo") {
+        setLogoFile(files[0]);
+      } else if (name === "banner") {
+        setBannerFile(files[0]);
+      }
+    }
+  };
+
+  const handleCancelFile = (type) => {
+    if (type === "logo") {
+      setLogoFile(null);
+      document.querySelector('input[name="logo"]').value = "";
+    } else if (type === "banner") {
+      setBannerFile(null);
+      document.querySelector('input[name="banner"]').value = "";
     }
   };
 
@@ -77,18 +103,17 @@ export default function EmployerRegister() {
       if (isUpdating && userId) {
         response = await axios.patch("http://localhost:5000/api/employer/update-user", {
           userId,
-        ...userData
+          ...userData,
         });
       } else {
         response = await axios.post("http://localhost:5000/api/employer/register", userData);
-        console.log('Register response:', response.data); // Debug: Log response
-        setUserId(response.data.user.id);
+        setUserId(response.data.user?.id);
       }
       setStep(2);
       setIsUpdating(true);
     } catch (err) {
-      console.error('User submit error:', err);
-      setError(err.response?.data?.error || "Something went wrong");
+      console.error("User submit error:", err);
+      setError(err.response?.data?.error || "Failed to submit user data. Please try again.");
     }
   };
 
@@ -96,9 +121,8 @@ export default function EmployerRegister() {
     e.preventDefault();
     setError(null);
     try {
-      console.log('Submitting company form with userId:', userId); // Debug: Log userId
       if (!userId) {
-        throw new Error('User ID is missing');
+        throw new Error("User ID is missing");
       }
       const formData = new FormData();
       formData.append("userId", userId);
@@ -114,26 +138,46 @@ export default function EmployerRegister() {
       if (logoFile) formData.append("logo", logoFile);
       if (bannerFile) formData.append("banner", bannerFile);
 
-      const response = await axios.post("http://localhost:5000/api/employer/company", formData, {
+      await axios.post("http://localhost:5000/api/employer/company", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       router.push("/success");
     } catch (err) {
-      console.error('Company submit error:', err);
-      setError(err.response?.data?.error || err.message || "Something went wrong");
+      console.error("Company submit error:", err);
+      setError(err.response?.data?.error || err.message || "Failed to submit company data. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-lg shadow-2xl rounded-2xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-primary to-indigo-600 text-white">
-          <CardTitle className="text-2xl font-bold flex items-center gap-2">
-            {step === 1 ? <User className="h-6 w-6" /> : <Building2 className="h-6 w-6" />}
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl bg-[#44a6b1] shadow-2xl py-0 gap-0 rounded-2xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-[#44a6b1] text-white p-6">
+          <CardTitle className="text-3xl font-bold flex items-center gap-3">
+            <span className="bg-white text-[#44a6b1] rounded-full p-2">
+              {step === 1 ? <User className="h-6 w-6" /> : <Building2 className="h-6 w-6" />}
+            </span>
             Employer Registration
           </CardTitle>
-          <Progress value={step === 1 ? 50 : 100} className="mt-4 h-2" />
-          <p className="text-sm text-center mt-2">Step {step} of 2</p>
+          <div>
+            <div className="flex justify-between bg-gray-200 p-1 rounded-full items-center">
+              <button
+                className={`w-1/2 py-1 text-md font-medium rounded-full ${
+                  step === 1 ? "bg-blue-200 text-blue-900 border border-blue-300" : "bg-gray-200 text-gray-700"
+                } transition-colors duration-200`}
+                onClick={() => setStep(1)}
+              >
+                Employee Info
+              </button>
+              <button
+                className={`w-1/2 py-1 text-md font-medium rounded-full ${
+                  step === 2 ? "bg-blue-200 text-blue-900 border border-blue-300" : "bg-gray-200 text-gray-700"
+                } transition-colors duration-200`}
+                onClick={() => setStep(2)}
+              >
+                Company Profile
+              </button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="p-6 bg-white">
           <AnimatePresence mode="wait">
@@ -147,16 +191,29 @@ export default function EmployerRegister() {
                 onSubmit={handleUserSubmit}
                 className="space-y-6"
               >
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                  <Input
-                    name="name"
-                    value={userData.name}
-                    onChange={handleUserChange}
-                    required
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter your full name"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                    <Input
+                      name="name"
+                      value={userData.name}
+                      onChange={handleUserChange}
+                      required
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Designation</label>
+                    <Input
+                      name="designation"
+                      value={userData.designation}
+                      onChange={handleUserChange}
+                      required
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="HR Manager"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Email Address</label>
@@ -166,37 +223,33 @@ export default function EmployerRegister() {
                     value={userData.email}
                     onChange={handleUserChange}
                     required
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
+                    className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
                     placeholder="Enter your email"
                   />
                 </div>
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium text-gray-700">Password</label>
                   <Input
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={userData.password}
                     onChange={handleUserChange}
                     required
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter your password"
+                    className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors pr-10"
+                    placeholder="Enter a secure password"
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Designation</label>
-                  <Input
-                    name="designation"
-                    value={userData.designation}
-                    onChange={handleUserChange}
-                    required
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter your designation (e.g., HR Manager)"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-9 text-gray-500 hover:text-blue-500"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
                 <Button
                   type="submit"
-                  className="w-full bg-primary hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-[#44a6b1] hover:bg-[#44a6b1]/20 text-white transition-colors flex items-center justify-center gap-2"
                 >
                   {isUpdating ? "Update" : "Next"} <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -213,16 +266,29 @@ export default function EmployerRegister() {
                 className="space-y-6"
                 encType="multipart/form-data"
               >
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Company Name</label>
-                  <Input
-                    name="name"
-                    value={companyData.name}
-                    onChange={handleCompanyChange}
-                    required
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter company name"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Company Name</label>
+                    <Input
+                      name="name"
+                      value={companyData.name}
+                      onChange={handleCompanyChange}
+                      required
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="TechCorp Inc."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Established Year</label>
+                    <Input
+                      name="established_year"
+                      type="number"
+                      value={companyData.established_year}
+                      onChange={handleCompanyChange}
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="2020"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Description</label>
@@ -230,8 +296,8 @@ export default function EmployerRegister() {
                     name="description"
                     value={companyData.description}
                     onChange={handleCompanyChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Describe your company"
+                    className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                    placeholder="A leading tech company..."
                   />
                 </div>
                 <div>
@@ -240,8 +306,8 @@ export default function EmployerRegister() {
                     name="website"
                     value={companyData.website}
                     onChange={handleCompanyChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="https://example.com"
+                    className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                    placeholder="https://techcorp.com"
                   />
                 </div>
                 <div>
@@ -251,8 +317,24 @@ export default function EmployerRegister() {
                     type="file"
                     accept="image/jpeg,image/png,image/gif"
                     onChange={handleFileChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
+                    className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 text-gray-600 transition-colors"
                   />
+                  {logoFile && (
+                    <div className="mt-2 relative inline-block">
+                      <img
+                        src={URL.createObjectURL(logoFile)}
+                        alt="Logo Preview"
+                        className="w-[100px] h-[100px] object-cover rounded-lg shadow-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleCancelFile("logo")}
+                        className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Banner Image</label>
@@ -261,59 +343,68 @@ export default function EmployerRegister() {
                     type="file"
                     accept="image/jpeg,image/png,image/gif"
                     onChange={handleFileChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
+                    className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 text-gray-600 transition-colors"
                   />
+                  {bannerFile && (
+                    <div className="mt-2 relative inline-block">
+                      <img
+                        src={URL.createObjectURL(bannerFile)}
+                        alt="Banner Preview"
+                        className="w-[100px] h-[100px] object-cover rounded-lg shadow-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleCancelFile("banner")}
+                        className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Location</label>
-                  <Input
-                    name="location"
-                    value={companyData.location}
-                    onChange={handleCompanyChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter company location"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Location</label>
+                    <Input
+                      name="location"
+                      value={companyData.location}
+                      onChange={handleCompanyChange}
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="123 Business Street"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Pincode</label>
+                    <Input
+                      name="pincode"
+                      value={companyData.pincode}
+                      onChange={handleCompanyChange}
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="123456"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Pincode</label>
-                  <Input
-                    name="pincode"
-                    value={companyData.pincode}
-                    onChange={handleCompanyChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter pincode"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">State</label>
-                  <Input
-                    name="state"
-                    value={companyData.state}
-                    onChange={handleCompanyChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter state"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Industry</label>
-                  <Input
-                    name="industry"
-                    value={companyData.industry}
-                    onChange={handleCompanyChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter industry"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Established Year</label>
-                  <Input
-                    name="established_year"
-                    type="number"
-                    value={companyData.established_year}
-                    onChange={handleCompanyChange}
-                    className="mt-1 focus:ring-primary focus:border-primary transition-colors"
-                    placeholder="Enter year (e.g., 2020)"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">State</label>
+                    <Input
+                      name="state"
+                      value={companyData.state}
+                      onChange={handleCompanyChange}
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="California"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Industry</label>
+                    <Input
+                      name="industry"
+                      value={companyData.industry}
+                      onChange={handleCompanyChange}
+                      className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 placeholder-gray-600 transition-colors"
+                      placeholder="Technology"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Company Size</label>
@@ -323,10 +414,10 @@ export default function EmployerRegister() {
                       handleCompanyChange({ target: { name: "size", value } })
                     }
                   >
-                    <SelectTrigger className="mt-1 focus:ring-primary focus:border-primary bg-white">
+                    <SelectTrigger className="mt-1 focus:ring-blue-300 focus:border-blue-300 bg-blue-50 text-gray-600 transition-colors">
                       <SelectValue placeholder="Select size" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-blue-50 text-gray-900 shadow-md">
                       <SelectItem value="1-10">1-10</SelectItem>
                       <SelectItem value="11-50">11-50</SelectItem>
                       <SelectItem value="51-200">51-200</SelectItem>
@@ -335,25 +426,25 @@ export default function EmployerRegister() {
                   </Select>
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
-                <div className="flex space-x-2">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setStep(1)}
-                    className="w-1/2 flex items-center justify-center gap-2"
+                    className="w-full sm:w-1/2 bg-gray-100 text-[#44a6b1] hover:bg-blue-200 transition-colors flex items-center justify-center gap-2"
                   >
                     <ArrowLeft className="h-4 w-4" /> Back
                   </Button>
                   <Button
                     type="submit"
-                    className="w-1/2 bg-primary hover:bg-indigo-700 flex items-center justify-center gap-2"
+                    className="w-full sm:w-1/2 bg-[#44a6b1] hover:bg-[#44a6b1]/20 text-white transition-colors flex items-center justify-center gap-2"
                   >
                     Submit <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
               </motion.form>
             )}
-          </AnimatePresence>
+          </AnimatePresence>          
         </CardContent>
       </Card>
     </div>
