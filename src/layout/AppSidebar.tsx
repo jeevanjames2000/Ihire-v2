@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    path: "/employees",
+    path: "/employerDashboard",
   },
   {
     icon: <UserCircleIcon />,
@@ -40,7 +40,7 @@ const navItems: NavItem[] = [
   {
     icon: <UserCircleIcon />,
     name: "Post a job",
-    path: "/EmpPosting",
+    path: "/employerDashboard/createJob",
   },
   {
     icon: <UserCircleIcon />,

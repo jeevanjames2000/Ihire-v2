@@ -1,0 +1,281 @@
+[
+  {
+    "id": 1,
+    "name": "IT & Software",
+    "categories": [
+      {
+        "id": 1,
+        "name": "Development",
+        "subcategories": [
+          { "id": 1, "name": "Frontend Developer" },
+          { "id": 2, "name": "Backend Developer" },
+          { "id": 3, "name": "Fullstack Developer" },
+          { "id": 4, "name": "Mobile App Developer" },
+          { "id": 5, "name": "Game Developer" }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "DevOps",
+        "subcategories": [
+          { "id": 6, "name": "AWS Engineer" },
+          { "id": 7, "name": "Azure Engineer" },
+          { "id": 8, "name": "CI/CD Engineer" },
+          { "id": 9, "name": "Site Reliability Engineer" }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Data Science",
+        "subcategories": [
+          { "id": 10, "name": "Data Analyst" },
+          { "id": 11, "name": "Data Scientist" },
+          { "id": 12, "name": "Machine Learning Engineer" },
+          { "id": 13, "name": "AI Researcher" }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Quality Assurance",
+        "subcategories": [
+          { "id": 14, "name": "Manual Tester" },
+          { "id": 15, "name": "Automation Tester" },
+          { "id": 16, "name": "Performance Tester" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Finance",
+    "categories": [
+      {
+        "id": 5,
+        "name": "Accounting",
+        "subcategories": [
+          { "id": 17, "name": "Tax Accountant" },
+          { "id": 18, "name": "Audit Specialist" },
+          { "id": 19, "name": "Management Accountant" }
+        ]
+      },
+      {
+        "id": 6,
+        "name": "Banking",
+        "subcategories": [
+          { "id": 20, "name": "Loan Officer" },
+          { "id": 21, "name": "Risk Analyst" },
+          { "id": 22, "name": "Investment Banker" }
+        ]
+      },
+      {
+        "id": 7,
+        "name": "Insurance",
+        "subcategories": [
+          { "id": 23, "name": "Claims Adjuster" },
+          { "id": 24, "name": "Underwriter" },
+          { "id": 25, "name": "Insurance Agent" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Healthcare",
+    "categories": [
+      {
+        "id": 8,
+        "name": "Medical",
+        "subcategories": [
+          { "id": 26, "name": "General Physician" },
+          { "id": 27, "name": "Surgeon" },
+          { "id": 28, "name": "Nurse" },
+          { "id": 29, "name": "Medical Assistant" }
+        ]
+      },
+      {
+        "id": 9,
+        "name": "Pharmaceuticals",
+        "subcategories": [
+          { "id": 30, "name": "Pharmacist" },
+          { "id": 31, "name": "Pharmaceutical Sales" },
+          { "id": 32, "name": "Regulatory Affairs Specialist" }
+        ]
+      },
+      {
+        "id": 10,
+        "name": "Biotechnology",
+        "subcategories": [
+          { "id": 33, "name": "Biotech Researcher" },
+          { "id": 34, "name": "Clinical Research Associate" },
+          { "id": 35, "name": "Biotech Lab Technician" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Education",
+    "categories": [
+      {
+        "id": 11,
+        "name": "Teaching",
+        "subcategories": [
+          { "id": 36, "name": "Primary School Teacher" },
+          { "id": 37, "name": "Secondary School Teacher" },
+          { "id": 38, "name": "College Professor" },
+          { "id": 39, "name": "Special Education Teacher" }
+        ]
+      },
+      {
+        "id": 12,
+        "name": "Administration",
+        "subcategories": [
+          { "id": 40, "name": "School Principal" },
+          { "id": 41, "name": "Academic Coordinator" },
+          { "id": 42, "name": "Registrar" }
+        ]
+      },
+      {
+        "id": 13,
+        "name": "Support",
+        "subcategories": [
+          { "id": 43, "name": "Librarian" },
+          { "id": 44, "name": "Lab Assistant" },
+          { "id": 45, "name": "Counselor" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Manufacturing",
+    "categories": [
+      {
+        "id": 14,
+        "name": "Production",
+        "subcategories": [
+          { "id": 46, "name": "Production Manager" },
+          { "id": 47, "name": "Assembly Line Worker" },
+          { "id": 48, "name": "Quality Control Inspector" }
+        ]
+      },
+      {
+        "id": 15,
+        "name": "Maintenance",
+        "subcategories": [
+          { "id": 49, "name": "Maintenance Technician" },
+          { "id": 50, "name": "Mechanical Engineer" },
+          { "id": 51, "name": "Electrical Engineer" }
+        ]
+      },
+      {
+        "id": 16,
+        "name": "Supply Chain",
+        "subcategories": [
+          { "id": 52, "name": "Logistics Coordinator" },
+          { "id": 53, "name": "Warehouse Manager" },
+          { "id": 54, "name": "Procurement Specialist" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Retail",
+    "categories": [
+      {
+        "id": 17,
+        "name": "Sales",
+        "subcategories": [
+          { "id": 55, "name": "Sales Executive" },
+          { "id": 56, "name": "Store Manager" },
+          { "id": 57, "name": "Visual Merchandiser" }
+        ]
+      },
+      {
+        "id": 18,
+        "name": "Customer Service",
+        "subcategories": [
+          { "id": 58, "name": "Customer Support Representative" },
+          { "id": 59, "name": "Call Center Agent" },
+          { "id": 60, "name": "Retail Associate" }
+        ]
+      },
+      {
+        "id": 19,
+        "name": "Inventory",
+        "subcategories": [
+          { "id": 61, "name": "Inventory Manager" },
+          { "id": 62, "name": "Stock Clerk" },
+          { "id": 63, "name": "Supply Chain Analyst" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Telecommunications",
+    "categories": [
+      {
+        "id": 20,
+        "name": "Network",
+        "subcategories": [
+          { "id": 64, "name": "Network Engineer" },
+          { "id": 65, "name": "Telecom Technician" },
+          { "id": 66, "name": "Field Support Engineer" }
+        ]
+      },
+      {
+        "id": 21,
+        "name": "Sales & Marketing",
+        "subcategories": [
+          { "id": 67, "name": "Telecom Sales Executive" },
+          { "id": 68, "name": "Product Manager" },
+          { "id": 69, "name": "Marketing Analyst" }
+        ]
+      },
+      {
+        "id": 22,
+        "name": "Customer Support",
+        "subcategories": [
+          { "id": 70, "name": "Customer Service Representative" },
+          { "id": 71, "name": "Technical Support Engineer" },
+          { "id": 72, "name": "Help Desk Technician" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Hospitality & Tourism",
+    "categories": [
+      {
+        "id": 23,
+        "name": "Hotel Management",
+        "subcategories": [
+          { "id": 73, "name": "Hotel Manager" },
+          { "id": 74, "name": "Front Desk Executive" },
+          { "id": 75, "name": "Housekeeping Supervisor" }
+        ]
+      },
+      {
+        "id": 24,
+        "name": "Travel & Tourism",
+        "subcategories": [
+          { "id": 76, "name": "Tour Guide" },
+          { "id": 77, "name": "Travel Agent" },
+          { "id": 78, "name": "Event Coordinator" }
+        ]
+      },
+      {
+        "id": 25,
+        "name": "Food & Beverage",
+        "subcategories": [
+          { "id": 79, "name": "Restaurant Manager" },
+          { "id": 80, "name": "Chef" },
+          { "id": 81, "name": "Bartender" }
+        ]
+      }
+    ]
+  }
+]
