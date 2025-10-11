@@ -28,7 +28,7 @@ export default function EmployerLogin() {
     try {
       const response = await axios.post("http://localhost:5000/api/users/login", formData);
       localStorage.setItem("token", response.data.token);
-      router.push("/employees");
+      router.push("/employerDashboard");
     } catch (err) {
       console.error("Login error:", err);
       setError(err.response?.data?.error || "Invalid email or password");
@@ -39,7 +39,6 @@ export default function EmployerLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative bg-gradient-to-br from-gray-100 via-white to-gray-50 overflow-hidden">
-      {/* Subtle floating shapes for depth */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
