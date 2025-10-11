@@ -1,32 +1,64 @@
 'use client';
-import React, { useState, useMemo } from 'react';
-import { notFound } from 'next/navigation';
+import React, { useState, useMemo, useEffect } from 'react';
+import { notFound, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { MapPin, Briefcase, Bookmark, Building2, Globe, ArrowLeft, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import jobData from '@/lib/database/jobs.json';
 export default function CompanyProfile({ params }) {
-   const { id } = React.use(params);
-  const allJobs = Object.values(jobData).flat();
-  const company = useMemo(() => {
-    const job = allJobs.find((j) => (j.companyId || j.company.toLowerCase().replace(/\s+/g, '-')) === id);
-    if (!job) return null;
-    return {
-      id: job.companyId || id,
-      name: job.company,
-      logo: job.logo,
-      banner: job.companyBanner || 'https://via.placeholder.com/1200x200?text=Company+Banner',
-      description: job.description || `Join ${job.company} to work on exciting projects!`,
-      about: job.companyAbout || `${job.company} is a leading company in its industry, dedicated to innovation and excellence.`,
-      location: job.companyLocation || job.location,
-      website: job.companyWebsite || `https://${job.company.toLowerCase().replace(/\s+/g, '')}.com`,
-    };
-  }, [id, allJobs]);
+  const { id } = React.use(params);
+  const router = useRouter();
   const [savedCompanies, setSavedCompanies] = useState(new Set());
+  const [cachedCompanies, setCachedCompanies] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const cacheKey = 'companies';
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      setCachedCompanies(JSON.parse(cached));
+      setLoading(false);
+    } else {
+      const allJobs = Object.values(jobData).flat();
+      const companyMap = new Map();
+      allJobs.forEach((job) => {
+        const companyId = job.companyId || job.company.toLowerCase().replace(/\s+/g, '-');
+        if (!companyMap.has(companyId)) {
+          companyMap.set(companyId, {
+            id: companyId,
+            name: job.company,
+            logo: job.logo,
+            banner: job.companyBanner || 'https://via.placeholder.com/1200x200?text=Company+Banner',
+            description: job.companyDescription || `Join ${job.company} to work on exciting projects!`,
+            about: job.companyAbout || `${job.company} is a leading company in its industry, dedicated to innovation and excellence.`,
+            location: job.companyLocation || job.location,
+            website: job.companyWebsite || `https://${job.company.toLowerCase().replace(/\s+/g, '')}.com`,
+            jobs: 1,
+          });
+        } else {
+          const company = companyMap.get(companyId);
+          company.jobs += 1;
+        }
+      });
+      const companies = Array.from(companyMap.values());
+      setCachedCompanies(companies);
+      localStorage.setItem(cacheKey, JSON.stringify(companies));
+      setLoading(false);
+    }
+  }, []);
+  const companies = useMemo(() => cachedCompanies || [], [cachedCompanies]);
+  const company = useMemo(() => {
+    if (id === 'all') return null;
+    return companies.find((c) => c.id === id);
+  }, [id, companies]);
   const companyJobs = useMemo(() => {
-    return allJobs.filter((j) => (j.companyId || j.company.toLowerCase().replace(/\s+/g, '-')) === id);
-  }, [id, allJobs]);
+    if (id === 'all') return [];
+    return Object.values(jobData)
+      .flat()
+      .filter((j) => (j.companyId || j.company.toLowerCase().replace(/\s+/g, '-')) === id);
+  }, [id]);
   const toggleSaveCompany = (companyId) => {
     setSavedCompanies((prev) => {
       const newSet = new Set(prev);
@@ -38,73 +70,151 @@ export default function CompanyProfile({ params }) {
       return newSet;
     });
   };
+  const toggleSaveJob = (jobId) => {
+    setSavedCompanies((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(jobId)) {
+        newSet.delete(jobId);
+      } else {
+        newSet.add(jobId);
+      }
+      return newSet;
+    });
+  };
+  if (loading) {
+    return (
+      <section className="min-h-screen bg-gray-100 py-16">
+        <div className="container mx-auto px-6">
+          <div className="text-center text-gray-600">Loading...</div>
+        </div>
+      </section>
+    );
+  }
+  if (id === 'all') {
+    return (
+      <section className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-16">
+        <div className="container mx-auto px-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800"
+          >
+            All Companies
+          </motion.h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {companies.map((company, index) => (
+              <motion.div
+                key={company.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                onClick={() => router.push(`/companies/${company.id}`)}
+                className="cursor-pointer"
+              >
+                <Card className="relative h-full bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <CardHeader className="flex items-center space-x-4 p-6">
+                    <div className="w alternatelyw-12 h-12 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                      <Image
+                        src={company.logo}
+                        alt={`${company.name} logo`}
+                        width={48}
+                        height={48}
+                        className="object-contain"
+                        onError={(e) => {
+                          e.target.src = `https://via.placeholder.com/48?text=${company.name.charAt(0)}`;
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800">{company.name}</h3>
+                      <p className="text-sm text-gray-500 truncate">{company.location}</p>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6 pt-0">
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{company.description}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-gray-600 text-sm flex items-center gap-2">
+                        <Briefcase className="h-4 w-4" /> {company.jobs} Openings
+                      </p>
+                      <Button
+                        variant="outline"
+                        className="text-sm text-blue-600 border-blue-600 hover:bg-blue-50 transition-colors duration-200"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/companies/${company.id}`);
+                        }}
+                      >
+                        View Jobs
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
   if (!company) return notFound();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {}
-        <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm py-4 px-4 mb-6">
+        <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm py-4 px-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link
-                href="/"
-                className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors"
+                href="/companies/all"
+                className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
                 aria-label="Back to companies"
               >
                 <ArrowLeft className="h-5 w-5" />
                 <span className="text-sm font-medium">Back to Companies</span>
               </Link>
-              <span className="text-slate-400">/</span>
-              <span className="text-sm font-medium text-slate-900">{company.name}</span>
+              <span className="text-gray-400">/</span>
+              <span className="text-sm font-medium text-gray-800">{company.name}</span>
             </div>
-            <h1 className="text-xl font-bold text-slate-900 hidden sm:block">{company.name}</h1>
+            <h1 className="text-xl font-bold text-gray-800 hidden sm:block">{company.name}</h1>
           </div>
         </div>
-        {}
         <div className="grid lg:grid-cols-3 gap-8">
-          {}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl">
-              {}
+            <Card className="bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg rounded-xl overflow-hidden">
               <div className="relative h-48">
                 <Image
-                  src={'https://placehold.co/600x400?text=Company+Banner'}
+                  src={company.banner}
                   alt={`${company.name} banner`}
-                  layout="fill"
-                  objectFit="cover"
-                  unoptimized
-                  className="rounded-t-2xl"
+                  fill
+                  className="object-cover rounded-t-xl"
                   onError={(e) => {
-                    e.target.src = 'https://placehold.co/600x400?text=Company+Banner';
+                    e.target.src = 'https://via.placeholder.com/1200x200?text=Company+Banner';
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
-              <div className="relative px-8 pb-8">
-                {}
+              <CardContent className="relative p-6">
                 <div className="flex items-start gap-5 -mt-12 mb-6">
                   <Image
                     src={company.logo}
                     alt={`${company.name} logo`}
-                    width={96}
-                    height={96}
-                    className="rounded-2xl object-cover border-4 border-white shadow-lg bg-white"
+                    width={80}
+                    height={80}
+                    className="rounded-xl object-cover border-4 border-white shadow-md bg-white"
                     onError={(e) => {
-                      e.target.src = `https://placehold.co/600x400?text=${company.name.charAt(0)}`;
+                      e.target.src = `https://via.placeholder.com/80?text=${company.name.charAt(0)}`;
                     }}
                   />
-                  <div className="flex-1 pt-14">
-                    <h1 className="text-2xl font-bold text-slate-900 mb-2 sm:hidden">{company.name}</h1>
-                    <div className="flex items-center gap-2 text-slate-600 mb-4">
-                      <Building2 className="h-5 w-5" />
-                      <span className="text-lg font-medium">{company.name}</span>
-                    </div>
+                  <div className="flex-1 pt-8">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-2 sm:hidden">{company.name}</h1>
                     <div className="flex flex-wrap gap-2 mb-6">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-sm font-medium">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-100 border border-gray-200 text-gray-700 rounded-xl text-sm font-medium">
                         <MapPin className="h-4 w-4" />
                         {company.location}
                       </span>
-                      <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-xl text-sm font-medium">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-100 border border-blue-200 text-blue-700 rounded-xl text-sm font-medium">
                         <Globe className="h-4 w-4" />
                         <a href={company.website} target="_blank" rel="noopener noreferrer">
                           Website
@@ -113,11 +223,9 @@ export default function CompanyProfile({ params }) {
                     </div>
                     <div className="flex gap-3">
                       <Button
-                        className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300"
-                       
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
                       >
-                                             <a href={company.website} target="_blank" rel="noopener noreferrer">
-
+                        <a href={company.website} target="_blank" rel="noopener noreferrer">
                           Visit Website
                         </a>
                       </Button>
@@ -125,8 +233,8 @@ export default function CompanyProfile({ params }) {
                         onClick={() => toggleSaveCompany(company.id)}
                         className={`p-3 rounded-xl border-2 transition-all duration-200 ${
                           savedCompanies.has(company.id)
-                            ? 'bg-blue-50 border-blue-600 text-blue-600'
-                            : 'border-slate-300 text-slate-600 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50'
+                            ? 'bg-blue-100 border-blue-600 text-blue-600'
+                            : 'border-gray-300 text-gray-600 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-100'
                         }`}
                         aria-label={savedCompanies.has(company.id) ? 'Unsave company' : 'Save company'}
                       >
@@ -135,37 +243,35 @@ export default function CompanyProfile({ params }) {
                     </div>
                   </div>
                 </div>
-                {}
                 <div className="max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar pr-2">
-                  <div className="prose max-w-none">
-                    <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 mb-6 border border-slate-200">
-                      <h2 className="text-lg font-bold text-slate-900 mb-3">About {company.name}</h2>
-                      <p className="text-slate-700 leading-relaxed">{company.about}</p>
+                  <div className="space-y-6">
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                      <h2 className="text-lg font-bold text-gray-800 mb-3">About {company.name}</h2>
+                      <p className="text-gray-700 leading-relaxed">{company.about}</p>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-xl p-6 mb-6 border border-slate-200">
-                      <h2 className="text-lg font-bold text-slate-900 mb-3">Description</h2>
-                      <p className="text-slate-700 leading-relaxed">{company.description}</p>
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                      <h2 className="text-lg font-bold text-gray-800 mb-3">Description</h2>
+                      <p className="text-gray-700 leading-relaxed">{company.description}</p>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
-          {}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 sticky top-6">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">Current Openings</h2>
+            <Card className="bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg rounded-xl p-6 sticky top-24">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Current Openings</h2>
               {companyJobs.length > 0 ? (
                 <div className="space-y-4">
                   {companyJobs.map((job) => (
                     <div
                       key={job.id}
-                      className="bg-slate-50 rounded-xl p-4 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 transition-all duration-200"
+                      className="bg-gray-50 rounded-xl p-4 hover:bg-blue-50 hover:border-blue-200 border border-gray-200 transition-all duration-200"
                     >
                       <div className="flex items-start gap-3">
                         <Briefcase className="h-6 w-6 text-blue-600 mt-1" />
                         <div className="flex-1">
-                          <h3 className="font-semibold text-slate-900 text-sm mb-1">
+                          <h3 className="font-semibold text-gray-800 text-sm mb-1">
                             <Link
                               href={`/jobs/${job.id}`}
                               className="hover:text-blue-600 transition-colors"
@@ -173,7 +279,7 @@ export default function CompanyProfile({ params }) {
                               {job.title}
                             </Link>
                           </h3>
-                          <div className="flex items-center gap-2 text-xs text-slate-600">
+                          <div className="flex items-center gap-2 text-xs text-gray-600">
                             <span className="flex items-center gap-1">
                               <MapPin className="h-3.5 w-3.5" />
                               {job.location}
@@ -189,7 +295,7 @@ export default function CompanyProfile({ params }) {
                           className={`p-2 rounded-lg transition-colors ${
                             savedCompanies.has(job.id)
                               ? 'bg-blue-100 text-blue-600'
-                              : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                              : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                           }`}
                           aria-label={savedCompanies.has(job.id) ? 'Unsave job' : 'Save job'}
                         >
@@ -200,10 +306,19 @@ export default function CompanyProfile({ params }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-slate-500 text-sm">No open positions at this time.</p>
+                <p className="text-gray-600 text-sm">No open positions at this time.</p>
               )}
-            </div>
+            </Card>
           </div>
+        </div>
+        <div className="text-center mt-12">
+          <Button
+            variant="default"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
+            onClick={() => router.push('/companies/all')}
+          >
+            See All Companies
+          </Button>
         </div>
       </div>
       <style jsx>{`
@@ -224,7 +339,4 @@ export default function CompanyProfile({ params }) {
       `}</style>
     </div>
   );
-}
-function toggleSaveJob(jobId) {
-  console.log(`Toggling save for job ${jobId}`);
 }

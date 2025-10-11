@@ -3,6 +3,7 @@ import Header from "./Header";
 import Hero from "./Hero";
 import FeaturedJobs from "./FeaturedJobs"
 import BrowseCompanies from "./BrowseCompanies"
+import Footer from "@/footer/Footer";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <FeaturedJobs/>
       <BrowseCategories />
       <BrowseCompanies/>
+      <Footer/>
     </div>
   );
 }
