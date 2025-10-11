@@ -22,6 +22,7 @@ export const fetchCategories = createAsyncThunk(
       const axiosInstance = token ? axiosAuth(token) : axios;
 
       const res = await axiosInstance.get('/categories/getCategories');
+      console.log("res",res)
       return Array.isArray(res.data) ? res.data : [];
     } catch (err) {
       return rejectWithValue(err.response?.data?.error || err.message || 'Error fetching categories');
@@ -37,13 +38,15 @@ export const fetchSubcategories = createAsyncThunk(
       if (!categoryName) return rejectWithValue('Invalid category name');
 
       const { user } = getState();
+      console.log("user",user)
       const token = user.userInfo?.token || localStorage.getItem('token');
+      console.log("token",token)
       const axiosInstance = token ? axiosAuth(token) : axios;
-
+console.log("axios",axiosInstance)
       const res = await axiosInstance.get('/subcategories', {
         params: { category_name: categoryName },
       });
-
+console.log("res",res )
       return Array.isArray(res.data.subcategories) ? res.data.subcategories : [];
     } catch (err) {
       return rejectWithValue(err.response?.data?.error || err.message || 'Error fetching subcategories');

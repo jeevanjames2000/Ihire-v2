@@ -75,7 +75,7 @@ const CreateJob = () => {
 
   useEffect(() => {
     if (formData.category_id) {
-      dispatch(fetchSubcategories(formData.category_id));
+      dispatch(fetchSubcategories(formData.category_name));
     } else {
       dispatch({ type: "categories/resetSubcategories" });
     }
@@ -269,7 +269,7 @@ const CreateJob = () => {
                 >
                   <SelectTrigger className={errors.category_id ? "border-red-500" : ""}>
                     <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
+                    </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="default">Select a category</SelectItem>
                     {categories.map((cat) => (
