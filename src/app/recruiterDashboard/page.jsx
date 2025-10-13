@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { fetchEmployerDashboard, clearDashboard } from "../../store/dashboardSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { useRouter } from "next/navigation";
-
+import SendInviteForm from "../../components/invites/SendInviteForm";
 // Memoized selectors for stability
 const selectUserState = createSelector(
   [(state) => state.user || {}],
@@ -134,10 +134,10 @@ const TeamCollaborationCard = () => (
   <div className="rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
     <Share2 className="text-teal-600 w-6 h-6 mb-3" />
     <h4 className="text-xl font-semibold text-gray-800 dark:text-white/90 mb-4">Team Collaboration</h4>
-    <p className="text-gray-900 mb-4 text-sm">Manage hiring team</p>
-    {/* <Link href="/team" className="text-teal-600 hover:text-teal-800 font-semibold transition-colors text-sm">
-      Invite Team →
-    </Link> */}
+    <p className="text-gray-900 mb-4 text-sm">Invite team members to collaborate</p>
+    <Link href="/teamcollaboration" className="text-teal-600 hover:text-teal-800 font-semibold transition-colors text-sm">
+      Invite →  
+    </Link>
   </div>
 );
 

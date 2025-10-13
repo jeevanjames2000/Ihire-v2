@@ -111,7 +111,7 @@ export default function EmployerRegister() {
       }
       setStep(2);
       setIsUpdating(true);
-      router.push("/recruiterDashboard")
+     
     } catch (err) {
       console.error("User submit error:", err);
       setError(err.response?.data?.error || "Failed to submit user data. Please try again.");
@@ -139,7 +139,7 @@ export default function EmployerRegister() {
       if (logoFile) formData.append("logo", logoFile);
       if (bannerFile) formData.append("banner", bannerFile);
 
-      await axios.post("http://localhost:5000/api/employer/company", formData, {
+     const res= await axios.post("http://localhost:5000/api/employer/company", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const { companyId, company } = res.data || {};
@@ -152,7 +152,7 @@ export default function EmployerRegister() {
         banner_url: company.banner_url || res.data.banner_url || null
       }));
     }
-
+router.push("/recruiterDashboard");
     } catch (err) {
       console.error("Company submit error:", err);
       setError(err.response?.data?.error || err.message || "Failed to submit company data. Please try again.");
