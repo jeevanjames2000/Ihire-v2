@@ -28,7 +28,7 @@ export default function EmployerLogin() {
     try {
       const response = await axios.post("http://localhost:5000/api/employer/login", formData);
       localStorage.setItem("token", response.data.token);
-      router.push("/employerDashboard");
+      router.push("/recruiterDashboard");
     } catch (err) {
       console.error("Login error:", err);
       setError(err.response?.data?.error || "Invalid email or password");
