@@ -193,7 +193,7 @@ const EmpDashboard = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-teal-50 to-indigo-50 p-4">
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6 w-full">
         <h3 className="mb-5 text-xl font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
-          Employee Dashboard
+         Recruiter Dashboard
         </h3>
         {isLoading && !timeoutReached ? (
           <div className="flex flex-col justify-center items-center py-8 space-y-2">

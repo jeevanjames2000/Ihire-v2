@@ -287,8 +287,7 @@ const AppSidebar: React.FC = () => {
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-        <h1 className="font-bold text-2xl">
-Employee Dashboard</h1>
+        <h1 className="font-bold text-2xl"> Recruiter Dashboard</h1>
             </>
           ) : (
             <Image
