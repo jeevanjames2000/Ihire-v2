@@ -1,25 +1,154 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { use } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { MapPin, DollarSign, Briefcase, Bookmark, ChevronRight, Filter, Users, Building2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import jobData from '@/lib/database/jobs.json';
-export default function JobDetailPage({ params }) {
-   const { id } = React.use(params);
-  const allJobs = Object.values(jobData).flat();
-  const job = allJobs.find((j) => j.id === Number(id));
+
+export default function JobDetailPage({ params: paramsPromise }) {
+  const params = use(paramsPromise);
+  const { id } = params || {};
+  console.log('params:', params); // Debug: Should log { id: "2" }
+
+  if (!id) {
+    console.error('Invalid or missing job ID');
+    return notFound();
+  }
+
+  const [job, setJob] = useState(null);
+  const [allJobs, setAllJobs] = useState([]);
+ 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [savedJobs, setSavedJobs] = useState(new Set());
+
+  // Initialize savedJobs from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('savedJobs');
+        if (saved) {
+          setSavedJobs(new Set(JSON.parse(saved)));
+        }
+      } catch (err) {
+        console.error('Error loading savedJobs from localStorage:', err);
+      }
+    }
+  }, []);
+
+  // Save savedJobs to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('savedJobs', JSON.stringify([...savedJobs]));
+      } catch (err) {
+        console.error('Error saving savedJobs to localStorage:', err);
+      }
+    }
+  }, [savedJobs]);
+
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        // Hardcoded URLs for testing
+        const jobUrl = `http://localhost:5000/api/jobs/getJobById/${id}`;
+        const allJobsUrl = 'http://localhost:5000/api/jobs/getAllJobs';
+        console.log('Environment variable NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL); // Debug
+        console.log('Fetching job from:', jobUrl); // Debug
+        const jobRes = await fetch(jobUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          mode: 'cors',
+          credentials: 'include',
+        });
+        if (!jobRes.ok) {
+          const errorText = await jobRes.text();
+          console.error('Job fetch response:', errorText);
+          throw new Error(`Failed to fetch job: ${jobRes.statusText} (Status: ${jobRes.status})`);
+        }
+        const jobData = await jobRes.json();
+        setJob({
+          ...jobData,
+          description: jobData.description || '',
+          responsibilities: jobData.responsibilities || [],
+          qualifications: jobData.qualifications || [],
+          category: jobData.category || 'General',
+          applicants: jobData.applicants || 0,
+        });
+
+        console.log('Fetching all jobs from:', allJobsUrl); // Debug
+        const allJobsRes = await fetch(allJobsUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          mode: 'cors',
+          credentials: 'include',
+        });
+        if (!allJobsRes.ok) {
+          const errorText = await allJobsRes.text();
+          console.error('All jobs fetch response:', errorText);
+          throw new Error(`Failed to fetch all jobs: ${allJobsRes.statusText} (Status: ${allJobsRes.status})`);
+        }
+        const allJobsData = await allJobsRes.json();
+        if (!Array.isArray(allJobsData)) {
+          throw new Error('Invalid response format: Expected an array of jobs');
+        }
+        const parsedAllJobs = allJobsData.map((job) => ({
+          ...job,
+          description: job.description ? JSON.parse(job.description).html || '' : '',
+          responsibilities: job.responsibilities || [],
+          qualifications: job.qualifications || [],
+          category: job.category || 'General',
+          applicants: job.applicants || 0,
+        }));
+        setAllJobs(parsedAllJobs);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchJobs();
+  }, [id]);
+
+
+
+  // Ensure responsibilities and qualifications are arrays
+const responsibilities = Array.isArray(job?.responsibilities)
+  ? job.responsibilities
+  : typeof job?.responsibilities === 'string'
+  ? job.responsibilities.split('\n').filter(Boolean)
+  : [];
+
+const qualifications = Array.isArray(job?.qualifications)
+  ? job.qualifications
+  : typeof job?.qualifications === 'string'
+  ? job.qualifications.split('\n').filter(Boolean)
+  : [];
+
+// Ensure jobLogo is always a valid URL
+const jobLogo =
+  job?.logo && typeof job.logo === 'string'
+    ? job.logo.startsWith('http')
+      ? job.logo
+      : `http://localhost:5000${job.logo}`
+    : `https://via.placeholder.com/96?text=${job?.company?.charAt(0) || 'J'}`;
+
+
   const relatedJobs = useMemo(() => {
     if (!job) return [];
     return allJobs
-      .filter(
-        (j) =>
-          j.id !== job.id &&
-          (j.type === job.type || j.company === job.company)
-      )
+      .filter((j) => j.id !== job.id && (j.type === job.type || j.company === job.company))
       .slice(0, 3);
   }, [job, allJobs]);
+// console.log("related",relatedJobs)
   const toggleSaveJob = (jobId) => {
     setSavedJobs((prev) => {
       const newSet = new Set(prev);
@@ -31,7 +160,11 @@ export default function JobDetailPage({ params }) {
       return newSet;
     });
   };
+
+  if (loading) return <p className="text-center mt-20">Loading...</p>;
+  if (error) return <p className="text-center mt-20 text-red-600">{error}</p>;
   if (!job) return notFound();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,11 +180,14 @@ export default function JobDetailPage({ params }) {
                 <span className="text-sm font-medium">Back to Jobs</span>
               </Link>
               <span className="text-slate-400">/</span>
-              <span className="text-sm font-medium text-slate-900 capitalize">{job.category.replace(/-/g, ' ')}</span>
+              <span className="text-sm font-medium text-slate-900 capitalize">
+                {job.category.replace(/-/g, ' ')}
+              </span>
             </div>
             <h1 className="text-xl font-bold text-slate-900 hidden sm:block">{job.title}</h1>
           </div>
         </div>
+
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-xl">
@@ -60,16 +196,7 @@ export default function JobDetailPage({ params }) {
               </div>
               <div className="relative px-8 pb-8">
                 <div className="flex items-start gap-5 -mt-12 mb-6">
-                  <Image
-                    src={job.logo}
-                    alt={`${job.company} logo`}
-                    width={96}
-                    height={96}
-                    className="rounded-2xl object-cover border-4 border-white shadow-lg bg-white"
-                    onError={(e) => {
-                      e.target.src = `https://via.placeholder.com/96?text=${job.company.charAt(0)}`;
-                    }}
-                  />
+                 
                   <div className="flex-1 pt-14">
                     <h1 className="text-2xl font-bold text-slate-900 mb-2 sm:hidden">{job.title}</h1>
                     <div className="flex items-center gap-2 text-slate-600 mb-4">
@@ -91,11 +218,14 @@ export default function JobDetailPage({ params }) {
                       </span>
                       <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-50 border border-orange-200 text-orange-700 rounded-xl text-sm font-medium">
                         <Users className="h-4 w-4" />
-                        15 applicants
+                        {job.applicants} applicants
                       </span>
                     </div>
                     <div className="flex gap-3">
-                      <button className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300">
+                      <button
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300"
+                        onClick={() => window.location.href = `/apply/${job.id}`}
+                      >
                         Apply Now
                         <ChevronRight className="h-5 w-5" />
                       </button>
@@ -121,34 +251,48 @@ export default function JobDetailPage({ params }) {
                         About this position
                       </h2>
                       <div className="text-slate-700 leading-relaxed space-y-3">
-                        <p>{job.description}</p>
-                        <p>
-                          This role offers the opportunity to work with cutting-edge
-                          technologies and make a real impact in a dynamic team environment.
-                        </p>
+                        <div dangerouslySetInnerHTML={{ __html: job.description }} />
+                        {job.description ? (
+                          <p>
+                            This role offers the opportunity to work with cutting-edge technologies and make a real impact in a dynamic team environment.
+                          </p>
+                        ) : (
+                          <p>No description available.</p>
+                        )}
                       </div>
                     </div>
                     <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-xl p-6 mb-6 border border-slate-200">
                       <h2 className="text-lg font-bold text-slate-900 mb-3">Key Responsibilities</h2>
-                      <ul className="space-y-2 text-slate-700">
-                        {job.responsibilities.map((resp, index) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <ChevronRight className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                            <span>{resp}</span>
-                          </li>
-                        ))}
-                      </ul>
+                  <ul className="space-y-2 text-slate-700">
+  {responsibilities.length > 0 ? (
+    responsibilities.map((resp, idx) => (
+      <li key={idx} className="flex items-start gap-2">
+        <ChevronRight className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+        <span>{resp}</span>
+      </li>
+    ))
+  ) : (
+    <li className="text-slate-500">No responsibilities listed.</li>
+  )}
+</ul>
+
                     </div>
                     <div className="bg-gradient-to-br from-emerald-50 to-slate-50 rounded-xl p-6 border border-slate-200">
                       <h2 className="text-lg font-bold text-slate-900 mb-3">Requirements</h2>
-                      <ul className="space-y-2 text-slate-700">
-                        {job.requirements.map((req, index) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <ChevronRight className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                            <span>{req}</span>
-                          </li>
-                        ))}
-                      </ul>
+                   
+<ul className="space-y-2 text-slate-700">
+  {qualifications.length > 0 ? (
+    qualifications.map((q, idx) => (
+      <li key={idx} className="flex items-start gap-2">
+        <ChevronRight className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+        <span>{q}</span>
+      </li>
+    ))
+  ) : (
+    <li className="text-slate-500">No requirements listed.</li>
+  )}
+</ul>
+
                     </div>
                   </div>
                 </div>
@@ -166,8 +310,8 @@ export default function JobDetailPage({ params }) {
                       className="bg-slate-50 rounded-xl p-4 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 transition-all duration-200"
                     >
                       <div className="flex items-start gap-3">
-                        <Image
-                          src={relatedJob.logo}
+      {/* <Image
+                          src={`http://localhost:5000/uploads/1756787652750.png`}
                           alt={`${relatedJob.company} logo`}
                           width={40}
                           height={40}
@@ -175,11 +319,28 @@ export default function JobDetailPage({ params }) {
                           onError={(e) => {
                             e.target.src = `https://via.placeholder.com/40?text=${relatedJob.company.charAt(0)}`;
                           }}
-                        />
+                        /> */}
+<Image
+  src={company.logo}
+  alt={`${company.name} logo`}
+  width={48}
+  height={48}
+  onError={(e) => {
+    e.target.src = '/uploads/logos/default-logo.png';
+  }}
+/>
+
+
+ 
+
+
+
+
+
                         <div className="flex-1">
                           <h3 className="font-semibold text-slate-900 text-sm mb-1">
                             <Link
-                              href={`/jobs/${relatedJob.id}`}
+                              href={`/job/${relatedJob.id}`}
                               className="hover:text-blue-600 transition-colors"
                             >
                               {relatedJob.title}
