@@ -284,7 +284,7 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/">
+        <Link href="/recruiterDashboard">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
         <h1 className="font-bold text-2xl"> Recruiter Dashboard</h1>

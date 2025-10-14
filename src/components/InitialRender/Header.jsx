@@ -5,10 +5,16 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import theme from '../../../theme.json';
+import Link from 'next/link';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+const token=localStorage?.getItem('token');
+console.log(token,"token");
 
+
+const tokenDecode=JSON.parse(atob(token?.split('.')[1]));
+console.log(tokenDecode,"tokenDecode");
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -33,15 +39,56 @@ export default function Header() {
           <Button variant="ghost" className={`${theme.buttons.ghost.text} ${theme.buttons.ghost.hoverText}`}>Salary</Button>
         </nav>
         
-        <div className="flex items-center space-x-4">
+        {!tokenDecode.company_id && (
+          <div className="flex items-center space-x-4">
           <Button
             className={`bg-gradient-to-r ${theme.buttons.primary.bg} ${theme.buttons.primary.to} 
             hover:bg-gradient-to-r ${theme.buttons.primary.bgHover} ${theme.buttons.primary.toHover} 
             ${theme.buttons.primary.text}`}
           >
-            Post Job
+            login
+          </Button>
+          <Button
+            className={`bg-gradient-to-r ${theme.buttons.primary.bg} ${theme.buttons.primary.to} 
+            hover:bg-gradient-to-r ${theme.buttons.primary.bgHover} ${theme.buttons.primary.toHover} 
+            ${theme.buttons.primary.text}`}
+          >
+            Register
           </Button>
 
+          <Avatar className="cursor-pointer">
+            <AvatarFallback>U</AvatarFallback>
+          </Avatar>
+
+
+
+
+
+
+
+
+
+
+
+          {/* <Button variant="ghost" size="sm" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <Menu className="h-5 w-5 md:hidden" />
+          </Button> */}
+          <Link href="/recruit/login">
+<Button
+            className={`bg-gradient-to-r ${theme.buttons.primary.bg} ${theme.buttons.primary.to} 
+            hover:bg-gradient-to-r ${theme.buttons.primary.bgHover} ${theme.buttons.primary.toHover} 
+            ${theme.buttons.primary.text}`}
+          >
+         Recuriter
+          </Button>
+          </Link>
+
+          
+        </div>
+        )}
+
+       {token && (
+          <div className="flex items-center space-x-4">
           <Avatar className="cursor-pointer">
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
@@ -50,6 +97,7 @@ export default function Header() {
             <Menu className="h-5 w-5 md:hidden" />
           </Button>
         </div>
+       )}
       </div>
       
       {isMenuOpen && (

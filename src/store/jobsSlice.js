@@ -29,7 +29,6 @@ export const fetchJobsByCategoryOrSubcategory = createAsyncThunk(
 
 
 
-
 export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
   async (
@@ -41,35 +40,41 @@ export const fetchJobs = createAsyncThunk(
       category,
       sortBy,
       userId,
-      postedByUser = false, 
+      postedByUser = false,
+      companyId,
     },
     { rejectWithValue }
   ) => {
     try {
-      const params = new URLSearchParams({
-        statusFilter,
-        searchQuery,
-        page,
-        jobsPerPage,
-        category,
-        sortBy,
-        userId,
-        postedByUser,
-      });
-
-      const response = await axios.get(
-        `http://localhost:5000/api/jobs?${params.toString()}`
+      const response = await axios.post(
+        `http://localhost:5000/api/jobs/getAllJobs`, // Match backend POST endpoint
+        {
+          companyId,
+          statusFilter,
+          searchQuery,
+          page,
+          jobsPerPage,
+          category,
+          sortBy,
+          userId,
+          postedByUser,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Assuming token is in localStorage
+          },
+        }
       );
 
       return response.data;
     } catch (error) {
+      console.error('Fetch jobs error:', error);
       return rejectWithValue(
         error.response?.data?.message || 'Failed to fetch jobs'
       );
     }
   }
 );
-
 
 export const fetchJobById = createAsyncThunk(
   'jobs/fetchJobById',

@@ -1,6 +1,7 @@
-'use client';
-
+"use client";
 import React, { useEffect, useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 
 function TagsInput({ value = [], onChange, placeholder = 'Add tag' }) {
   const [text, setText] = useState('');
@@ -11,15 +12,24 @@ function TagsInput({ value = [], onChange, placeholder = 'Add tag' }) {
     setText('');
   }
   function remove(tag) {
-    onChange(value.filter(x => x !== tag));
+    onChange(value.filter((x) => x !== tag));
   }
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-2">
         {value.map((t, i) => (
-          <span key={i} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700">
+          <span
+            key={i}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700"
+          >
             <span>{t}</span>
-            <button type="button" onClick={() => remove(t)} className="text-gray-500 hover:text-gray-700">×</button>
+            <button
+              type="button"
+              onClick={() => remove(t)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              ×
+            </button>
           </span>
         ))}
       </div>
@@ -36,7 +46,13 @@ function TagsInput({ value = [], onChange, placeholder = 'Add tag' }) {
           }}
           className="flex-1 rounded border border-gray-200 p-2 text-sm focus:ring-2 focus:ring-indigo-100"
         />
-        <button type="button" onClick={add} className="px-3 py-2 bg-indigo-600 text-white rounded">Add</button>
+        <button
+          type="button"
+          onClick={add}
+          className="px-3 py-2 bg-indigo-600 text-white rounded"
+        >
+          Add
+        </button>
       </div>
     </div>
   );
@@ -44,6 +60,20 @@ function TagsInput({ value = [], onChange, placeholder = 'Add tag' }) {
 
 export default function CreateJobPage() {
   const [description, setDescription] = useState('');
+  const [responsibilities, setResponsibilities] = useState(''); // New state for responsibilities
+  const [industries, setIndustries] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [qualificationCategories, setQualificationCategories] = useState([]);
+  const [qualificationSubcategories, setQualificationSubcategories] = useState([]);
+  const [errors, setErrors] = useState({
+    industry_id: '',
+    category_id: '',
+    subcategory_id: '',
+    qualification_category_id: '',
+    qualification_subcategory_id: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     company_id: '',
     title: '',
@@ -59,7 +89,7 @@ export default function CreateJobPage() {
     vacancies: 1,
     education: '',
     industry: '',
-    responsibilities: '',
+    responsibilities: '', // Will store HTML from ReactQuill
     qualifications: '',
     skills: [],
     labels: [],
@@ -67,6 +97,11 @@ export default function CreateJobPage() {
     walkin_details: null,
     receive_matching_email: false,
     share_with_subusers: false,
+    industry_id: '',
+    category_id: '',
+    subcategory_id: '',
+    qualification_category_id: '',
+    qualification_subcategory_id: '',
   });
   const [storedCompany, setStoredCompany] = useState(null);
   const [useStoredCompany, setUseStoredCompany] = useState(true);
@@ -76,58 +111,120 @@ export default function CreateJobPage() {
   const [previewHtml, setPreviewHtml] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const raw = typeof window !== 'undefined' ? localStorage.getItem('company') : null;
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed?.id) {
-            setStoredCompany(parsed);
-            setForm((f) => ({ ...f, company_id: parsed.id }));
-            setUseStoredCompany(true);
-            return;
-          }
-        }
-      } catch (e) {
-        console.error('Error parsing stored company:', e);
-      }
+  // Quill modules configuration
+  const quillModules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link'],
+      ['clean'],
+    ],
+  };
 
-      try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-        if (!token) {
-          setUseStoredCompany(false);
-          return;
-        }
-        const base = process.env.NEXT_PUBLIC_API_URL || '';
-        const res = await fetch(`${base}/api/company/my`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) {
-          setUseStoredCompany(false);
-          return;
-        }
-        const d = await res.json();
-        if (d?.company_id) {
-          setForm((f) => ({ ...f, company_id: d.company_id }));
-        }
-      } catch (e) {
-        console.error('Error fetching company:', e);
-        setUseStoredCompany(false);
-      }
-    })();
+  // Quill formats
+  const quillFormats = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'list',
+    'bullet',
+    'link',
+  ];
+
+  // Fetch industries
+  useEffect(() => {
+    fetch('http://localhost:5000/api/industries')
+      .then((res) => res.json())
+      .then(setIndustries)
+      .catch((error) => console.error('Error fetching industries:', error));
   }, []);
+
+  // Fetch categories based on industry
+  useEffect(() => {
+    if (form.industry_id) {
+      fetch(`http://localhost:5000/api/industries/${form.industry_id}/categories`)
+        .then((res) => res.json())
+        .then(setCategories)
+        .catch((error) => console.error('Error fetching categories:', error));
+      setForm((prev) => ({ ...prev, category_id: '', subcategory_id: '' }));
+      setSubcategories([]);
+    } else {
+      setCategories([]);
+      setSubcategories([]);
+    }
+  }, [form.industry_id]);
+
+  // Fetch subcategories based on category
+  useEffect(() => {
+    if (form.category_id) {
+      fetch(
+        `http://localhost:5000/api/industries/categories/${form.category_id}/subcategories`
+      )
+        .then((res) => res.json())
+        .then(setSubcategories)
+        .catch((error) => console.error('Error fetching subcategories:', error));
+      setForm((prev) => ({ ...prev, subcategory_id: '' }));
+    } else {
+      setSubcategories([]);
+    }
+  }, [form.category_id]);
+
+  // Fetch qualification categories
+  useEffect(() => {
+    fetch('http://localhost:5000/api/qualifications')
+      .then((res) => res.json())
+      .then((data) =>
+        setQualificationCategories(
+          data.filter((q) => q.subcategory === null || q.subcategory === '')
+        )
+      )
+      .catch((error) =>
+        console.error('Error fetching qualification categories:', error)
+      );
+  }, []);
+
+  // Fetch qualification subcategories based on selected category
+  useEffect(() => {
+    if (form.qualification_category_id) {
+      fetch(
+        `http://localhost:5000/api/qualifications/${form.qualification_category_id}/subcategories`
+      )
+        .then((res) => res.json())
+        .then(setQualificationSubcategories)
+        .catch((error) =>
+          console.error('Error fetching qualification subcategories:', error)
+        );
+      setForm((prev) => ({ ...prev, qualification_subcategory_id: '' }));
+    } else {
+      setQualificationSubcategories([]);
+    }
+  }, [form.qualification_category_id]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    setErrors((prev) => ({ ...prev, [name]: '' }));
+  };
 
   function addQuestion() {
     const q = questionText.trim();
     if (!q) return;
-    setForm((f) => ({ ...f, questions: [...f.questions, { question: q, type: questionType, options: [] }] }));
+    setForm((f) => ({
+      ...f,
+      questions: [...f.questions, { question: q, type: questionType, options: [] }],
+    }));
     setQuestionText('');
     setQuestionType('text');
   }
 
   function removeQuestion(idx) {
-    setForm((s) => ({ ...s, questions: s.questions.filter((_, i) => i !== idx) }));
+    setForm((s) => ({
+      ...s,
+      questions: s.questions.filter((_, i) => i !== idx),
+    }));
   }
 
   async function onSubmit(e) {
@@ -142,17 +239,36 @@ export default function CreateJobPage() {
       setMsg('Job title required');
       return;
     }
+    if (!form.qualification_category_id) {
+      setMsg('Qualification category required');
+      setErrors((prev) => ({
+        ...prev,
+        qualification_category_id: 'Qualification category is required',
+      }));
+      return;
+    }
+    if (!form.qualification_subcategory_id) {
+      setMsg('Qualification subcategory required');
+      setErrors((prev) => ({
+        ...prev,
+        qualification_subcategory_id: 'Qualification subcategory is required',
+      }));
+      return;
+    }
 
     setSubmitting(true);
 
     const payload = {
       ...form,
-      description: { html: description || '' }, // Store as HTML-compatible string
+      description: { html: description || '' }, // Send HTML content
+      responsibilities: responsibilities || '', // Send HTML content
       experience_min: form.experience_min ? Number(form.experience_min) : null,
       experience_max: form.experience_max ? Number(form.experience_max) : null,
       salary_min: form.salary_min ? Number(form.salary_min) : null,
       salary_max: form.salary_max ? Number(form.salary_max) : null,
       vacancies: form.vacancies ? Number(form.vacancies) : 1,
+      qualification_category_id: form.qualification_category_id || null,
+      qualification_subcategory_id: form.qualification_subcategory_id || null,
     };
 
     try {
@@ -192,8 +308,16 @@ export default function CreateJobPage() {
   }
 
   function preview() {
-    // Render description as plain text in preview (or basic HTML if needed)
-    setPreviewHtml(description ? `<pre>${description}</pre>` : '<p><i>No description</i></p>');
+    // Combine description and responsibilities for preview
+    const combinedHtml = `
+      <div>
+        <h3>Job Description</h3>
+        ${description || '<p><i>No description</i></p>'}
+        <h3>Responsibilities</h3>
+        ${responsibilities || '<p><i>No responsibilities</i></p>'}
+      </div>
+    `;
+    setPreviewHtml(combinedHtml);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -204,7 +328,11 @@ export default function CreateJobPage() {
           <label className="block text-sm font-medium text-gray-700">Company</label>
           <div className="mt-1 flex items-center gap-3">
             <div className="flex-1">
-              <select className="w-full rounded border border-gray-200 p-2 bg-gray-50" value={storedCompany.id} disabled>
+              <select
+                className="w-full rounded border border-gray-200 p-2 bg-gray-50"
+                value={storedCompany.id}
+                disabled
+              >
                 <option value={storedCompany.id}>{storedCompany.name}</option>
               </select>
             </div>
@@ -234,7 +362,11 @@ export default function CreateJobPage() {
           className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
         />
         <div className="mt-2 text-sm text-gray-500">
-          Don't have a company? <a href="/register-company" className="text-indigo-600 underline">Register your company</a>.
+          Don't have a company?{' '}
+          <a href="/register-company" className="text-indigo-600 underline">
+            Register your company
+          </a>
+          .
         </div>
       </div>
     );
@@ -244,7 +376,9 @@ export default function CreateJobPage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-2xl font-semibold text-gray-900 mb-3">Post a Job</h1>
-        <p className="text-sm text-gray-600 mb-6">Create a job listing. Enter the job description below.</p>
+        <p className="text-sm text-gray-600 mb-6">
+          Create a job listing. Enter the job description below.
+        </p>
 
         <form className="bg-white shadow rounded p-6" onSubmit={onSubmit}>
           <CompanySelector />
@@ -265,7 +399,9 @@ export default function CreateJobPage() {
                 type="number"
                 min="1"
                 value={form.vacancies}
-                onChange={(e) => setForm((s) => ({ ...s, vacancies: Number(e.target.value) }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, vacancies: Number(e.target.value) }))
+                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
@@ -278,10 +414,14 @@ export default function CreateJobPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Function / Area</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Function / Area
+              </label>
               <input
                 value={form.function_area}
-                onChange={(e) => setForm((s) => ({ ...s, function_area: e.target.value }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, function_area: e.target.value }))
+                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
@@ -294,10 +434,14 @@ export default function CreateJobPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Employment Type</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Employment Type
+              </label>
               <select
                 value={form.employment_type}
-                onChange={(e) => setForm((s) => ({ ...s, employment_type: e.target.value }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, employment_type: e.target.value }))
+                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               >
                 <option>Full-time</option>
@@ -308,40 +452,56 @@ export default function CreateJobPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Experience Min (years)</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Experience Min (years)
+              </label>
               <input
                 type="number"
                 min="0"
                 value={form.experience_min || ''}
-                onChange={(e) => setForm((s) => ({ ...s, experience_min: e.target.value }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, experience_min: e.target.value }))
+                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Experience Max (years)</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Experience Max (years)
+              </label>
               <input
                 type="number"
                 min="0"
                 value={form.experience_max || ''}
-                onChange={(e) => setForm((s) => ({ ...s, experience_max: e.target.value }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, experience_max: e.target.value }))
+                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Salary Min (INR)</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Salary Min (INR)
+              </label>
               <input
                 type="number"
                 value={form.salary_min || ''}
-                onChange={(e) => setForm((s) => ({ ...s, salary_min: e.target.value }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, salary_min: e.target.value }))
+                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Salary Max (INR)</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Salary Max (INR)
+              </label>
               <input
                 type="number"
                 value={form.salary_max || ''}
-                onChange={(e) => setForm((s) => ({ ...s, salary_max: e.target.value }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, salary_max: e.target.value }))
+                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
@@ -350,7 +510,9 @@ export default function CreateJobPage() {
                 <input
                   type="checkbox"
                   checked={form.hide_salary}
-                  onChange={(e) => setForm((s) => ({ ...s, hide_salary: e.target.checked }))}
+                  onChange={(e) =>
+                    setForm((s) => ({ ...s, hide_salary: e.target.checked }))
+                  }
                   className="rounded"
                 />
                 <span className="text-sm text-gray-700">Hide salary</span>
@@ -359,7 +521,12 @@ export default function CreateJobPage() {
                 <input
                   type="checkbox"
                   checked={form.receive_matching_email}
-                  onChange={(e) => setForm((s) => ({ ...s, receive_matching_email: e.target.checked }))}
+                  onChange={(e) =>
+                    setForm((s) => ({
+                      ...s,
+                      receive_matching_email: e.target.checked,
+                    }))
+                  }
                   className="rounded"
                 />
                 <span className="text-sm text-gray-700">Receive matching applicants</span>
@@ -368,7 +535,9 @@ export default function CreateJobPage() {
                 <input
                   type="checkbox"
                   checked={form.share_with_subusers}
-                  onChange={(e) => setForm((s) => ({ ...s, share_with_subusers: e.target.checked }))}
+                  onChange={(e) =>
+                    setForm((s) => ({ ...s, share_with_subusers: e.target.checked }))
+                  }
                   className="rounded"
                 />
                 <span className="text-sm text-gray-700">Share with sub-users</span>
@@ -383,12 +552,163 @@ export default function CreateJobPage() {
               />
             </div>
             <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Industry</label>
-              <input
-                value={form.industry}
-                onChange={(e) => setForm((s) => ({ ...s, industry: e.target.value }))}
-                className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
-              />
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label
+                    htmlFor="industry_id"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Industry
+                  </label>
+                  <select
+                    name="industry_id"
+                    id="industry_id"
+                    value={form.industry_id}
+                    onChange={handleChange}
+                    className={`border p-2 rounded w-full ${
+                      errors.industry_id ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    required
+                  >
+                    <option value="">Select Industry</option>
+                    {industries.map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.industry_id && (
+                    <p className="text-red-500 text-sm mt-1">{errors.industry_id}</p>
+                  )}
+                </div>
+                <div>
+                  <label
+                    htmlFor="category_id"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Category
+                  </label>
+                  <select
+                    name="category_id"
+                    id="category_id"
+                    value={form.category_id}
+                    onChange={handleChange}
+                    className={`border p-2 rounded w-full ${
+                      errors.category_id ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    required
+                    disabled={!form.industry_id}
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.category_id && (
+                    <p className="text-red-500 text-sm mt-1">{errors.category_id}</p>
+                  )}
+                </div>
+                <div>
+                  <label
+                    htmlFor="subcategory_id"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Subcategory
+                  </label>
+                  <select
+                    name="subcategory_id"
+                    id="subcategory_id"
+                    value={form.subcategory_id}
+                    onChange={handleChange}
+                    className={`border p-2 rounded w-full ${
+                      errors.subcategory_id ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    required
+                    disabled={!form.category_id}
+                  >
+                    <option value="">Select Subcategory</option>
+                    {subcategories.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.subcategory_id && (
+                    <p className="text-red-500 text-sm mt-1">{errors.subcategory_id}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="md:col-span-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label
+                    htmlFor="qualification_category_id"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Qualification Category
+                  </label>
+                  <select
+                    name="qualification_category_id"
+                    id="qualification_category_id"
+                    value={form.qualification_category_id}
+                    onChange={handleChange}
+                    className={`border p-2 rounded w-full ${
+                      errors.qualification_category_id
+                        ? 'border-red-500'
+                        : 'border-gray-300'
+                    }`}
+                    required
+                  >
+                    <option value="">Select Qualification Category</option>
+                    {qualificationCategories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.category}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.qualification_category_id && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.qualification_category_id}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label
+                    htmlFor="qualification_subcategory_id"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Qualification Subcategory
+                  </label>
+                  <select
+                    name="qualification_subcategory_id"
+                    id="qualification_subcategory_id"
+                    value={form.qualification_subcategory_id}
+                    onChange={handleChange}
+                    className={`border p-2 rounded w-full ${
+                      errors.qualification_subcategory_id
+                        ? 'border-red-500'
+                        : 'border-gray-300'
+                    }`}
+                    required
+                    disabled={!form.qualification_category_id}
+                  >
+                    <option value="">Select Qualification Subcategory</option>
+                    {qualificationSubcategories.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.subcategory}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.qualification_subcategory_id && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.qualification_subcategory_id}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="md:col-span-3">
               <label className="block text-sm font-medium text-gray-700">Key Skills</label>
@@ -401,7 +721,9 @@ export default function CreateJobPage() {
               </div>
             </div>
             <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Labels / Tags</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Labels / Tags
+              </label>
               <div className="mt-2">
                 <TagsInput
                   value={form.labels}
@@ -411,36 +733,63 @@ export default function CreateJobPage() {
               </div>
             </div>
             <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Job Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={8}
-                className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
-                placeholder="Enter job description here..."
-              />
-              <p className="text-xs text-gray-500 mt-2">Tip: Enter plain text for the job description.</p>
+              <label className="block text-sm font-medium text-gray-700">
+                Job Description
+              </label>
+              <div className="mt-1">
+                <ReactQuill
+                  value={description}
+                  onChange={setDescription}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  placeholder="Enter job description here..."
+                  className="border border-gray-200 rounded focus:ring-2 focus:ring-indigo-100"
+                  style={{ minHeight: '200px' }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Tip: Use the toolbar to format the job description (e.g., bold, lists).
+              </p>
             </div>
             <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Responsibilities</label>
-              <textarea
-                value={form.responsibilities}
-                onChange={(e) => setForm((s) => ({ ...s, responsibilities: e.target.value }))}
-                rows={4}
-                className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
-              />
+              <label className="block text-sm font-medium text-gray-700">
+                Responsibilities
+              </label>
+              <div className="mt-1">
+                <ReactQuill
+                  value={responsibilities}
+                  onChange={(value) => {
+                    setResponsibilities(value);
+                    setForm((s) => ({ ...s, responsibilities: value }));
+                  }}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  placeholder="Enter responsibilities here..."
+                  className="border border-gray-200 rounded focus:ring-2 focus:ring-indigo-100"
+                  style={{ minHeight: '150px' }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Tip: Use the toolbar to format responsibilities (e.g., bullet points).
+              </p>
             </div>
             <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700">Qualifications</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Qualifications
+              </label>
               <textarea
                 value={form.qualifications}
-                onChange={(e) => setForm((s) => ({ ...s, qualifications: e.target.value }))}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, qualifications: e.target.value }))
+                }
                 rows={4}
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
             <div className="md:col-span-3">
-              <h3 className="text-sm font-medium text-gray-800 mt-4">Walk-in Details (optional)</h3>
+              <h3 className="text-sm font-medium text-gray-800 mt-4">
+                Walk-in Details (optional)
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
                 <div>
                   <label className="text-sm text-gray-600">Start Date</label>
@@ -449,7 +798,10 @@ export default function CreateJobPage() {
                     onChange={(e) =>
                       setForm((s) => ({
                         ...s,
-                        walkin_details: { ...(s.walkin_details || {}), start_date: e.target.value },
+                        walkin_details: {
+                          ...(s.walkin_details || {}),
+                          start_date: e.target.value,
+                        },
                       }))
                     }
                     className="mt-1 w-full rounded border border-gray-200 p-2"
@@ -462,7 +814,10 @@ export default function CreateJobPage() {
                     onChange={(e) =>
                       setForm((s) => ({
                         ...s,
-                        walkin_details: { ...(s.walkin_details || {}), duration_days: Number(e.target.value) },
+                        walkin_details: {
+                          ...(s.walkin_details || {}),
+                          duration_days: Number(e.target.value),
+                        },
                       }))
                     }
                     className="mt-1 w-full rounded border border-gray-200 p-2"
@@ -474,7 +829,10 @@ export default function CreateJobPage() {
                     onChange={(e) =>
                       setForm((s) => ({
                         ...s,
-                        walkin_details: { ...(s.walkin_details || {}), timing: e.target.value },
+                        walkin_details: {
+                          ...(s.walkin_details || {}),
+                          timing: e.target.value,
+                        },
                       }))
                     }
                     className="mt-1 w-full rounded border border-gray-200 p-2"
@@ -486,7 +844,10 @@ export default function CreateJobPage() {
                     onChange={(e) =>
                       setForm((s) => ({
                         ...s,
-                        walkin_details: { ...(s.walkin_details || {}), contact_person: e.target.value },
+                        walkin_details: {
+                          ...(s.walkin_details || {}),
+                          contact_person: e.target.value,
+                        },
                       }))
                     }
                     className="mt-1 w-full rounded border border-gray-200 p-2"
@@ -498,7 +859,10 @@ export default function CreateJobPage() {
                     onChange={(e) =>
                       setForm((s) => ({
                         ...s,
-                        walkin_details: { ...(s.walkin_details || {}), contact_number: e.target.value },
+                        walkin_details: {
+                          ...(s.walkin_details || {}),
+                          contact_number: e.target.value,
+                        },
                       }))
                     }
                     className="mt-1 w-full rounded border border-gray-200 p-2"
@@ -510,7 +874,10 @@ export default function CreateJobPage() {
                     onChange={(e) =>
                       setForm((s) => ({
                         ...s,
-                        walkin_details: { ...(s.walkin_details || {}), venue: e.target.value },
+                        walkin_details: {
+                          ...(s.walkin_details || {}),
+                          venue: e.target.value,
+                        },
                       }))
                     }
                     className="mt-1 w-full rounded border border-gray-200 p-2"
@@ -522,7 +889,10 @@ export default function CreateJobPage() {
                     onChange={(e) =>
                       setForm((s) => ({
                         ...s,
-                        walkin_details: { ...(s.walkin_details || {}), google_map_url: e.target.value },
+                        walkin_details: {
+                          ...(s.walkin_details || {}),
+                          google_map_url: e.target.value,
+                        },
                       }))
                     }
                     className="mt-1 w-full rounded border border-gray-200 p-2"
@@ -531,7 +901,9 @@ export default function CreateJobPage() {
               </div>
             </div>
             <div className="md:col-span-3">
-              <h3 className="text-sm font-medium text-gray-800 mt-4">Candidate Questions</h3>
+              <h3 className="text-sm font-medium text-gray-800 mt-4">
+                Candidate Questions
+              </h3>
               <div className="flex gap-2 mt-2">
                 <input
                   className="flex-1 rounded border border-gray-200 p-2"
@@ -549,17 +921,29 @@ export default function CreateJobPage() {
                   <option value="select">Select</option>
                   <option value="radio">Radio</option>
                 </select>
-                <button type="button" onClick={addQuestion} className="px-3 py-2 bg-indigo-600 text-white rounded">
+                <button
+                  type="button"
+                  onClick={addQuestion}
+                  className="px-3 py-2 bg-indigo-600 text-white rounded"
+                >
                   Add
                 </button>
               </div>
               <ul className="mt-3 space-y-2">
                 {form.questions.map((q, i) => (
-                  <li key={i} className="flex items-center justify-between bg-gray-50 border border-gray-100 rounded p-2">
+                  <li
+                    key={i}
+                    className="flex items-center justify-between bg-gray-50 border border-gray-100 rounded p-2"
+                  >
                     <div className="text-sm text-gray-700">
-                      {q.question} <span className="text-xs text-gray-500">({q.type})</span>
+                      {q.question}{' '}
+                      <span className="text-xs text-gray-500">({q.type})</span>
                     </div>
-                    <button type="button" onClick={() => removeQuestion(i)} className="text-sm text-red-600">
+                    <button
+                      type="button"
+                      onClick={() => removeQuestion(i)}
+                      className="text-sm text-red-600"
+                    >
                       Remove
                     </button>
                   </li>
@@ -569,22 +953,44 @@ export default function CreateJobPage() {
           </div>
           {msg && <div className="mt-4 text-sm text-red-600">{msg}</div>}
           <div className="mt-6 flex justify-end gap-3">
-            <button type="button" onClick={preview} className="px-4 py-2 border rounded">
+            <button
+              type="button"
+              onClick={preview}
+              className="px-4 py-2 border rounded"
+            >
               Preview
             </button>
-            <button type="submit" disabled={submitting} className="px-4 py-2 bg-indigo-600 text-white rounded">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="px-4 py-2 bg-indigo-600 text-white rounded"
+            >
               {submitting ? 'Creating…' : 'Create Job'}
             </button>
           </div>
         </form>
         {previewHtml && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setPreviewHtml(null)}>
-            <div className="bg-white rounded-lg max-w-4xl w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+            onClick={() => setPreviewHtml(null)}
+          >
+            <div
+              className="bg-white rounded-lg max-w-4xl w-full mx-4 p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex justify-between items-start">
                 <h3 className="text-lg font-medium">Preview</h3>
-                <button onClick={() => setPreviewHtml(null)} className="text-gray-500 text-xl">×</button>
+                <button
+                  onClick={() => setPreviewHtml(null)}
+                  className="text-gray-500 text-xl"
+                >
+                  ×
+                </button>
               </div>
-              <div className="mt-4 prose max-w-none" dangerouslySetInnerHTML={{ __html: previewHtml }} />
+              <div
+                className="mt-4 prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
             </div>
           </div>
         )}

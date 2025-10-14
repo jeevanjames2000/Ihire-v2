@@ -142,16 +142,11 @@ export default function EmployerRegister() {
      const res= await axios.post("http://localhost:5000/api/employer/company", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      const { companyId, company } = res.data || {};
-    if (companyId && company) {
-  
-      localStorage.setItem('company', JSON.stringify({
-        id: companyId,
-        name: company.name,
-        logo_url: company.logo_url || res.data.logo_url || null,
-        banner_url: company.banner_url || res.data.banner_url || null
-      }));
+      const { companyId, company,token } = res.data || {};
+    if (token) {
+      localStorage.setItem("token", token);
     }
+    
 router.push("/recruiterDashboard");
     } catch (err) {
       console.error("Company submit error:", err);

@@ -21,7 +21,7 @@ import { fetchCategories } from '../../../../store/categoriesSlice.js';
 const Page = () => {
   const dispatch = useDispatch();
  const router=useRouter()
-
+const[id,setId]=useState(null)
   const {
   jobs = [],
   total = 0,
@@ -44,6 +44,18 @@ const {
   const [viewMode, setViewMode] = useState('grid');
   const [selectedJobs, setSelectedJobs] = useState([]);
 const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+let localStorage;
+
+
+
+useEffect(() => {
+    const token = localStorage?.getItem('token');
+const decodedToken=JSON.parse(atob(token.split('.')[1]))
+  setId(decodedToken?.company?._id)
+
+
+},[])
+
 
 useEffect(() => {
   const handler = setTimeout(() => {
@@ -69,6 +81,7 @@ dispatch(
     sortBy,
     userId: userInfo?.id,
     postedByUser: true,
+    companyId:id
   })
 );
 
