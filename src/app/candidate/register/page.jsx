@@ -38,7 +38,7 @@ export default function CandidateRegister() {
       localStorage.setItem("userType", "candidate");
 
       toast.success("Registration successful!");
-      router.push("/candidateDashboard");
+      router.push("/candidate/profile");
     } catch (err) {
       const errorMessage = err.response?.data?.error || "Registration failed";
       setError(errorMessage);
