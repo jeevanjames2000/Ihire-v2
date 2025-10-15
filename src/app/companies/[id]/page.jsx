@@ -17,8 +17,7 @@ export default function CompanyProfile({ params }) {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const cacheKey = 'companies';
-        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
-
+        if (typeof window === 'undefined') return;
     const cached = window.localStorage.getItem(cacheKey);
     if (cached) {
       setCachedCompanies(JSON.parse(cached));
@@ -129,6 +128,7 @@ export default function CompanyProfile({ params }) {
                         onError={(e) => {
                           e.target.src = `https://via.placeholder.com/48?text=${company.name.charAt(0)}`;
                         }}
+                        unoptimized
                       />
                     </div>
                     <div>
@@ -196,7 +196,6 @@ export default function CompanyProfile({ params }) {
                     e.target.src = 'https://via.placeholder.com/1200x200?text=Company+Banner';
                   }}
                       unoptimized
-
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
@@ -208,9 +207,7 @@ export default function CompanyProfile({ params }) {
                     width={80}
                     height={80}
                     className="rounded-xl object-cover border-4 border-white shadow-md bg-white"
-                    onError={(e) => {
-                      e.target.src = `https://via.placeholder.com/80?text=${company.name.charAt(0)}`;
-                    }}
+                    unoptimized
                   />
                   <div className="flex-1 pt-8">
                     <h1 className="text-2xl font-bold text-gray-800 mb-2 sm:hidden">{company.name}</h1>

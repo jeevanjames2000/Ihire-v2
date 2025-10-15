@@ -7,30 +7,25 @@ export default function CategoryPage({ params:paramsPromise, searchParams }) {
   const slug = params?.slug;      
 const search =useSearchParams()
 const city =search.get("city")
-
   const router = useRouter();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     if (!slug) {
       setError('Invalid category');
       setLoading(false);
       return;
     }
-
     const fetchJobs = async () => {
       try {
         const url = `http://localhost:5000/api/categories/${slug}?city=${city}`;
         const res = await fetch(url, { cache: 'no-store' });
-
         if (!res.ok) {
           throw new Error('Failed to fetch jobs');
         }
-
         const data = await res.json();
-        setJobs(Array.isArray(data) ? data : []); // Ensure data is an array
+        setJobs(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching jobs:', err);
@@ -38,11 +33,8 @@ const city =search.get("city")
         setLoading(false);
       }
     };
-
     fetchJobs();
-  }, [slug, city]); // Include city in dependencies
-
-  // Skeleton Loader Component
+  }, [slug, city]);
   const SkeletonLoader = () => (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {[...Array(3)].map((_, index) => (
@@ -54,16 +46,13 @@ const city =search.get("city")
       ))}
     </div>
   );
-
-  // Format slug for display
   const formattedSlug = slug
     ? slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
     : 'Category';
-
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-12 max-w-7xl">
-        {/* Header */}
+        {}
         <header className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
             {city ? `${formattedSlug} Jobs in ${city}` : `${formattedSlug} Jobs`}
@@ -74,11 +63,9 @@ const city =search.get("city")
             </p>
           )}
         </header>
-
-        {/* Loading State */}
+        {}
         {loading && <SkeletonLoader />}
-
-        {/* Error State */}
+        {}
         {error && (
           <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6" role="alert">
             <p className="font-semibold">Error: {error}</p>
@@ -95,8 +82,7 @@ const city =search.get("city")
             </button>
           </div>
         )}
-
-        {/* Jobs List or Empty State */}
+        {}
         {!loading && !error && (
           <section>
             {jobs.length === 0 ? (
