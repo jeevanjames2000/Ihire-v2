@@ -26,7 +26,7 @@ export default function EmployerLogin() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/employer/login", formData);
+      const response = await axios.post("http://localhost:5000/api/recruiter/login", formData);
       localStorage.setItem("token", response.data.token);
       router.push("/recruiterDashboard");
     } catch (err) {

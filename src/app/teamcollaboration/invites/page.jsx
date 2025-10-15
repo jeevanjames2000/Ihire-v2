@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Share2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { getAuthToken } from '../../lib/auth';
+import { getAuthToken } from '../../../lib/auth';
 
 export default function SendInviteForm() {
   const [formData, setFormData] = useState({ email: '', role: '' });
@@ -31,8 +31,9 @@ export default function SendInviteForm() {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div className="rounded-lg border w-full max-w-2xl mx-auto sm:mt-20 flex flex-col shadow-2xl p-8  border-gray-200 bg-white  dark:border-gray-800 dark:bg-white/[0.03]">
       <Share2 className="text-teal-600 w-6 h-6 mb-3" />
+      <useGoBack/>
       <h4 className="text-xl font-semibold text-gray-800 dark:text-white/90 mb-4">Team Collaboration</h4>
       <p className="text-gray-900 mb-4 text-sm">Invite team members to collaborate</p>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -64,9 +65,11 @@ export default function SendInviteForm() {
             <option value="viewer">Viewer</option>
           </select>
         </div>
-        <button type="submit" className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700">
+      <div className='flex justify-center items-center'>
+          <button type="submit" className="bg-teal-600  text-white px-4 py-2 rounded-md hover:bg-teal-700">
           Send Invite
         </button>
+      </div>
       </form>
     </div>
   );

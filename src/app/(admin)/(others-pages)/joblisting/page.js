@@ -17,11 +17,16 @@ import {
   setPage,
 } from '../../../../store/jobsSlice.js';
 import { fetchCategories } from '../../../../store/categoriesSlice.js';
-
+function descriptionToText(desc) {
+  if (!desc) return '';
+  const html = typeof desc === 'object' ? (desc.html || '') : String(desc);
+  // basic strip tags (quick)
+  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
 const Page = () => {
   const dispatch = useDispatch();
  const router=useRouter()
-
+const[id,setId]=useState(null)
   const {
   jobs = [],
   total = 0,
@@ -35,6 +40,10 @@ const Page = () => {
   jobsError = null,
 } = useSelector((state) => state.jobs || {});
 
+console.log("jobs",jobs)
+
+
+
 const {
   categories = [],
   status: categoriesStatus = 'idle',
@@ -44,6 +53,34 @@ const {
   const [viewMode, setViewMode] = useState('grid');
   const [selectedJobs, setSelectedJobs] = useState([]);
 const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+    useEffect(() => {
+      try {
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+        const token = window.localStorage.getItem('token');
+        if (!token) return;
+        const payloadBase64 = token.split('.')[1];
+        if (!payloadBase64) return;
+        // atob is available in the browser
+        const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        const tokenDecode = JSON.parse(jsonPayload);
+        if (tokenDecode?.company_id) {
+          setId(tokenDecode.company_id);
+        } else if (tokenDecode?.userId) {
+          // fallback if your token uses userId
+          setId(tokenDecode.userId);
+        }
+      } catch (err) {
+        console.warn('Failed to decode token from localStorage', err);
+      }
+    }, []);
+
+
 
 useEffect(() => {
   const handler = setTimeout(() => {
@@ -69,6 +106,7 @@ dispatch(
     sortBy,
     userId: userInfo?.id,
     postedByUser: true,
+    companyId:id
   })
 );
 
@@ -350,9 +388,10 @@ dispatch(
                     <p className="text-sm text-gray-500 mt-1 font-semibold">
                       {job.company_name || 'Unknown Company'} • {job.location || 'Unknown Location'}
                     </p>
-                    <p className="text-gray-600 mt-3 line-clamp-3" title={job.description}>
-                      {job.description || 'No description provided'}
-                    </p>
+                    <p className="text-gray-600 mt-3 line-clamp-3">
+  {descriptionToText(job.description) || 'No description provided'}
+</p>
+
                     <div className="mt-4 text-sm text-gray-600 space-y-2">
                       <p>
                         <span className="font-semibold">Category:</span> {categoryName(job.category)}
@@ -496,9 +535,10 @@ dispatch(
                           {job.company_name || 'Unknown Company'}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600 font-medium">{job.location || 'Unknown Location'}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 line-clamp-2" title={job.description}>
-                          {job.description || 'No description provided'}
-                        </td>
+                       <td className="px-4 py-3 text-sm text-gray-600 line-clamp-2">
+  <div dangerouslySetInnerHTML={{ __html: safeHtml(job.description) }} />
+</td>
+
                         <td className="px-4 py-3">
                           <span
                             className={`px-3 py-1 text-xs font-medium rounded-full ${
