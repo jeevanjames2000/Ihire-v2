@@ -132,7 +132,7 @@ export default function BrowseCompanies() {
             <Button
               variant="default"
               className="bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => router.push('/companies')}
+              onClick={() => router.push('/companies/all')}
             >
               See All Companies
             </Button>

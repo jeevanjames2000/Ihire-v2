@@ -9,21 +9,16 @@ export const dynamic = 'force-dynamic';
 export default function JobDetailPage({ params: paramsPromise }) {
   const params = use(paramsPromise);
   const { id } = params || {};
-  console.log('params:', params); // Debug: Should log { id: "2" }
-
+  console.log('params:', params);
   if (!id) {
     console.error('Invalid or missing job ID');
     return notFound();
   }
-
   const [job, setJob] = useState(null);
   const [allJobs, setAllJobs] = useState([]);
- 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [savedJobs, setSavedJobs] = useState(new Set());
-
-  // Initialize savedJobs from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -36,8 +31,6 @@ export default function JobDetailPage({ params: paramsPromise }) {
       }
     }
   }, []);
-
-  // Save savedJobs to localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -47,14 +40,11 @@ export default function JobDetailPage({ params: paramsPromise }) {
       }
     }
   }, [savedJobs]);
-
   useEffect(() => {
     async function fetchJobs() {
       try {
-        // Hardcoded URLs for testing
-        const jobUrl = `${ process.env.NEXT_PUBLIC_API_URL}api/jobs/getJobById/${id}`;
+        const jobUrl = `${ process.env.NEXT_PUBLIC_API_URL}/api/jobs/getJobById/${id}`;
         const allJobsUrl = `${ process.env.NEXT_PUBLIC_API_URL}/api/jobs/getAllJobs`;
-
         const jobRes = await fetch(jobUrl, {
           method: 'GET',
           headers: {
@@ -78,8 +68,6 @@ export default function JobDetailPage({ params: paramsPromise }) {
           category: jobData.category || 'General',
           applicants: jobData.applicants || 0,
         });
-
-        
         const allJobsRes = await fetch(allJobsUrl, {
           method: 'GET',
           headers: {
@@ -116,38 +104,28 @@ export default function JobDetailPage({ params: paramsPromise }) {
     }
     fetchJobs();
   }, [id]);
-
-
-
-  // Ensure responsibilities and qualifications are arrays
 const responsibilities = Array.isArray(job?.responsibilities)
   ? job.responsibilities
   : typeof job?.responsibilities === 'string'
   ? job.responsibilities.split('\n').filter(Boolean)
   : [];
-
 const qualifications = Array.isArray(job?.qualifications)
   ? job.qualifications
   : typeof job?.qualifications === 'string'
   ? job.qualifications.split('\n').filter(Boolean)
   : [];
-
-// Ensure jobLogo is always a valid URL
 const jobLogo =
   job?.logo && typeof job.logo === 'string'
     ? job.logo.startsWith('http')
       ? job.logo
       : `http://localhost:5000${job.logo}`
     : `https://via.placeholder.com/96?text=${job?.company?.charAt(0) || 'J'}`;
-
-
   const relatedJobs = useMemo(() => {
     if (!job) return [];
     return allJobs
       .filter((j) => j.id !== job.id && (j.type === job.type || j.company === job.company))
       .slice(0, 3);
   }, [job, allJobs]);
-// console.log("related",relatedJobs)
   const toggleSaveJob = (jobId) => {
     setSavedJobs((prev) => {
       const newSet = new Set(prev);
@@ -159,11 +137,9 @@ const jobLogo =
       return newSet;
     });
   };
-
   if (loading) return <p className="text-center mt-20">Loading...</p>;
   if (error) return <p className="text-center mt-20 text-red-600">{error}</p>;
   if (!job) return notFound();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -186,7 +162,6 @@ const jobLogo =
             <h1 className="text-xl font-bold text-slate-900 hidden sm:block">{job.title}</h1>
           </div>
         </div>
-
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-xl">
@@ -195,7 +170,6 @@ const jobLogo =
               </div>
               <div className="relative px-8 pb-8">
                 <div className="flex items-start gap-5 -mt-12 mb-6">
-                 
                   <div className="flex-1 pt-14">
                     <h1 className="text-2xl font-bold text-slate-900 mb-2 sm:hidden">{job.title}</h1>
                     <div className="flex items-center gap-2 text-slate-600 mb-4">
@@ -274,11 +248,9 @@ const jobLogo =
     <li className="text-slate-500">No responsibilities listed.</li>
   )}
 </ul>
-
                     </div>
                     <div className="bg-gradient-to-br from-emerald-50 to-slate-50 rounded-xl p-6 border border-slate-200">
                       <h2 className="text-lg font-bold text-slate-900 mb-3">Requirements</h2>
-                   
 <ul className="space-y-2 text-slate-700">
   {qualifications.length > 0 ? (
     qualifications.map((q, idx) => (
@@ -291,7 +263,6 @@ const jobLogo =
     <li className="text-slate-500">No requirements listed.</li>
   )}
 </ul>
-
                     </div>
                   </div>
                 </div>
@@ -328,14 +299,6 @@ const jobLogo =
     e.target.src = '/uploads/logos/default-logo.png';
   }}
 /> */}
-
-
- 
-
-
-
-
-
                         <div className="flex-1">
                           <h3 className="font-semibold text-slate-900 text-sm mb-1">
                             <Link

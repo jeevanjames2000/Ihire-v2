@@ -31,8 +31,7 @@ export default function JobListings({ params }) {
   const [savedJobs, setSavedJobs] = useState(new Set());
   useEffect(() => {
   const cacheKey = `jobs_${cleanSlug}`;
-        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
-
+        if (typeof window === 'undefined') return;
   const cached = window.localStorage.getItem(cacheKey);
     let jobsToLoad = [];
     if (cleanSlug === 'jobs') {
