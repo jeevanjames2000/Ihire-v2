@@ -34,10 +34,9 @@ export default function BrowseCategories() {
 
         const categoriesWithIcons = data.map((cat) => {
           const slug = cat.name.toLowerCase().replace(/\s+/g, '-');
-          let color = 'from-blue-500 to-indigo-600'; // default
-          let icon = Code; // default
+          let color = 'from-blue-500 to-indigo-600'; 
+          let icon = Code; 
 
-          // Assign color/icon based on industry_id
           switch (cat.industry_id) {
             case 1:
               color = 'from-blue-500 to-indigo-600';
@@ -83,8 +82,7 @@ export default function BrowseCategories() {
             title: cat.name,
             color,
             icon,
-            jobs: '0', // Replace with actual job count if available
-            Icon: iconMap[icon?.name] || Code,
+            jobs:cat?.job_count, 
           };
         });
 
@@ -137,20 +135,19 @@ export default function BrowseCategories() {
           whileInView={{ opacity: 1 }}
           transition={{ staggerChildren: 0.05 }}
         >
-          {categories.map((cat) => (
+          {categories.slice(0,6).map((cat) => (
             <motion.div
               key={cat.slug}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ scale: 1.05, y: -5 }}
-            // onClick={() => router.push(`/categories/${cat.slug}?city=hyderabad`)}
 onClick={() => router.push(`/${cat.slug}-jobs?city=hyderabad`)}
               className="cursor-pointer"
             >
               <Card className="h-full border-none shadow-lg overflow-hidden group">
                 <CardHeader className="pb-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-r ${cat.color}`}>
-                    <cat.Icon className="h-6 w-6 text-white" />
+                    <cat.icon className="h-6 w-6 text-white" />
                   </div>
                   <CardTitle className="text-xl font-semibold text-slate-800 group-hover:gradient-text transition-all duration-300">
                     {cat.title}
@@ -166,7 +163,24 @@ onClick={() => router.push(`/${cat.slug}-jobs?city=hyderabad`)}
             </motion.div>
           ))}
         </motion.div>
+   
       </div>
+  {categories.length > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center mt-12"
+            >
+              <Button
+                variant="default"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => router.push('/all-jobs')}
+              >
+                See All Categories
+              </Button>
+            </motion.div>
+          )}
     </section>
   );
 }

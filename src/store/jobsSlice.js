@@ -285,7 +285,7 @@ export const updateJob = createAsyncThunk(
         category_id: jobData.category_id || null,
         subcategory_id: jobData.subcategory_id || null,
       };
-      const response = await axios.put(`http://localhost:5000/api/jobs/${id}/updatejob`, payload, {
+      const response = await axios.put(`http://localhost:5000/api/jobs/updatejob/${id}`, payload, {
         headers: token ? { Authorization: `Bearer ${token}`, 'Cache-Control': 'no-cache' } : { 'Cache-Control': 'no-cache' },
         timeout: 10000,
       });
@@ -322,7 +322,7 @@ export const deleteJob = createAsyncThunk(
 
       if (!userId) return rejectWithValue("User ID is missing");
 
-      await axios.delete(`http://localhost:5000/api/jobs/${id}/deletejobs`, {
+      await axios.delete(`http://localhost:5000/api/jobs/deletejobs/${id}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
