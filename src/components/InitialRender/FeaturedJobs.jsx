@@ -70,13 +70,13 @@ export default function FeaturedJobs() {
               <Card className="h-full border-none shadow-lg overflow-hidden group">
                 <CardHeader className="pb-4 pt-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <Image
+                    {/* <Image
                       src={job.logo || '/default-logo.png'}
                       alt={`${job.company} logo`}
                       width={40}
                       height={40}
                       className="rounded-full"
-                    />
+                    /> */}
                     <CardTitle className="text-lg font-semibold text-slate-800">
                       {job.company}
                     </CardTitle>

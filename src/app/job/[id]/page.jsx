@@ -320,7 +320,7 @@ const jobLogo =
                             e.target.src = `https://via.placeholder.com/40?text=${relatedJob.company.charAt(0)}`;
                           }}
                         /> */}
-<Image
+{/* <Image
   src={company.logo}
   alt={`${company.name} logo`}
   width={48}
@@ -328,7 +328,7 @@ const jobLogo =
   onError={(e) => {
     e.target.src = '/uploads/logos/default-logo.png';
   }}
-/>
+/> */}
 
 
  
