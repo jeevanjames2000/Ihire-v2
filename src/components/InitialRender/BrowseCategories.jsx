@@ -143,8 +143,8 @@ export default function BrowseCategories() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ scale: 1.05, y: -5 }}
-            onClick={() => router.push(`/categories/${cat.slug}?city=hyderabad`)}
-
+            // onClick={() => router.push(`/categories/${cat.slug}?city=hyderabad`)}
+onClick={() => router.push(`/${cat.slug}-jobs?city=hyderabad`)}
               className="cursor-pointer"
             >
               <Card className="h-full border-none shadow-lg overflow-hidden group">
