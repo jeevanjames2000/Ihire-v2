@@ -3,13 +3,15 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { use } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import ApplyJobModal from "../../../components/ui/ApplyJobModal"
 import { MapPin, DollarSign, Briefcase, Bookmark, ChevronRight, Filter, Users, Building2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 export default function JobDetailPage({ params: paramsPromise }) {
   const params = use(paramsPromise);
   const { id } = params || {};
-  console.log('params:', params);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+
   if (!id) {
     console.error('Invalid or missing job ID');
     return notFound();
@@ -43,7 +45,7 @@ export default function JobDetailPage({ params: paramsPromise }) {
   useEffect(() => {
     async function fetchJobs() {
       try {
-        const jobUrl = `${ process.env.NEXT_PUBLIC_API_URL}/api/jobs/getJobById/${id}`;
+        const jobUrl = `${ process.env.NEXT_PUBLIC_API_URL}/api/jobs/getJobById?id=${id}`;
         const allJobsUrl = `${ process.env.NEXT_PUBLIC_API_URL}/api/jobs/getAllJobs`;
         const jobRes = await fetch(jobUrl, {
           method: 'GET',
@@ -197,7 +199,7 @@ const jobLogo =
                     <div className="flex gap-3">
                       <button
                         className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300"
-                        onClick={() => window.location.href = `/apply/${job.id}`}
+                        onClick={() => setIsModalOpen(true)}
                       >
                         Apply Now
                         <ChevronRight className="h-5 w-5" />
@@ -358,6 +360,11 @@ const jobLogo =
           background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
         }
       `}</style>
+     <ApplyJobModal
+        jobId={id}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
