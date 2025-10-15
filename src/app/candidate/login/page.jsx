@@ -11,7 +11,7 @@ import { Lock, Mail, LogIn } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+export const dynamic = 'force-dynamic';
 export default function CandidateLogin() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
@@ -31,7 +31,9 @@ export default function CandidateLogin() {
 
     try {
       const response = await axios.post("http://localhost:5000/api/candidates/login", formData);
-      localStorage.setItem("token", response.data.token);
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+      // window.localStorage.setItem("token", response.data.token);
       toast.success("Login successful!");
       router.push("/candidateDashboard");
     } catch (err) {

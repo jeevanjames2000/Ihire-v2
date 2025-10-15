@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { getAuthToken } from '../lib/auth';
+import { getAuthToken } from '../../lib/auth';
 
 export default function AcceptInvite() {
   const [token, setToken] = useState('');

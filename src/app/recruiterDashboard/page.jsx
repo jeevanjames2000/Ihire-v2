@@ -9,6 +9,7 @@ import { fetchEmployerDashboard, clearDashboard } from "../../store/dashboardSli
 import { createSelector } from "@reduxjs/toolkit";
 import { useRouter } from "next/navigation";
 import SendInviteForm from "../../components/invites/SendInviteForm";
+export const dynamic = 'force-dynamic';
 // Memoized selectors for stability
 const selectUserState = createSelector(
   [(state) => state.user || {}],
@@ -163,7 +164,7 @@ const EmpDashboard = () => {
   console.log("profile", profile);
   console.log("jobs", jobs);
   const [timeoutReached, setTimeoutReached] = useState(false);
-  const token = userInfo?.token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
+  const token = userInfo?.token || (typeof window !== "undefined" ? window.localStorage.getItem("token") : null);
 
   useEffect(() => {
     // Authentication and role check (commented out as per your code)

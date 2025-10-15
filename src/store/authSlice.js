@@ -14,10 +14,11 @@ export const loginUser = createAsyncThunk(
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Login failed");
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
 
       // Save in localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem(
+      window.localStorage.setItem("token", data.token);
+      window.localStorage.setItem(
         userType === "candidate" ? "candidateProfile" : "employeeProfile",
         JSON.stringify(data.user)
       );
@@ -41,7 +42,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.clear();
+      window.localStorage.clear();
     },
   },
   extraReducers: (builder) => {

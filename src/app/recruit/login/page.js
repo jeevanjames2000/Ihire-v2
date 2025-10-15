@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Lock, Mail, LogIn } from "lucide-react";
 import Link from "next/link";
-
+export const dynamic = 'force-dynamic';
 export default function EmployerLogin() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
@@ -27,7 +27,9 @@ export default function EmployerLogin() {
 
     try {
       const response = await axios.post("http://localhost:5000/api/recruiter/login", formData);
-      localStorage.setItem("token", response.data.token);
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+      // window.localStorage.setItem("token", response.data.token);
       router.push("/recruiterDashboard");
     } catch (err) {
       console.error("Login error:", err);

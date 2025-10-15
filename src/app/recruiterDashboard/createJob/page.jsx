@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-
+export const dynamic = 'force-dynamic';
 function TagsInput({ value = [], onChange, placeholder = 'Add tag' }) {
   const [text, setText] = useState('');
   function add() {
@@ -142,7 +142,7 @@ export default function CreateJobPage() {
     if (userId) {
       fetch(`http://localhost:5000/api/recruiter/${userId}/companies`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
       })
         .then((res) => res.json())
@@ -298,7 +298,7 @@ export default function CreateJobPage() {
     };
 
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const token = typeof window !== 'undefined' ? window.localStorage.getItem('token') : null;
       const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const res = await fetch(`${base}/api/jobs/createJob`, {
         method: 'POST',

@@ -75,7 +75,9 @@ export default function Register() {
       console.log('Registration response:', response.data);
 
       if (response.data.authToken) {
-        localStorage.setItem('authToken', response.data.authToken);
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+        // window.localStorage.setItem('authToken', response.data.authToken);
         console.log('Auth token stored in localStorage:', response.data.authToken);
       } else {
         console.warn('No authToken received in response');

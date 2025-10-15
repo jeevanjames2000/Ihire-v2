@@ -78,7 +78,7 @@ export default function Hero() {
     if (term && !searchHistory.includes(term)) {
       const newHist = [term, ...searchHistory].slice(0, 10);
       setSearchHistory(newHist);
-      localStorage.setItem('searchHistory', JSON.stringify(newHist));
+      // window.localStorage.setItem('searchHistory', JSON.stringify(newHist));
     }
   };
 
@@ -137,7 +137,7 @@ const handleCategoryClick = (slug) => {
 
 
   useEffect(() => {
-    const hist = localStorage.getItem('searchHistory');
+    const hist = window.localStorage.getItem('searchHistory');
     if (hist) {
       setSearchHistory(JSON.parse(hist));
     }

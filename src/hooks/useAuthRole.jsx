@@ -10,7 +10,9 @@ export default function useAuthRole(allowedRoles = []) {
 
   useEffect(() => {
     try {
-      const token = localStorage.getItem("token");
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+      const token = window.localStorage.getItem("token");
 
       if (!token) {
         setIsAuthorized(false);

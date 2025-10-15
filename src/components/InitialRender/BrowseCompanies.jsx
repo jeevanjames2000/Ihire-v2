@@ -13,7 +13,9 @@ export default function BrowseCompanies() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const cacheKey = 'companies';
-    const cached = localStorage.getItem(cacheKey);
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+    const cached = window.localStorage.getItem(cacheKey);
     if (cached) {
       setCachedCompanies(JSON.parse(cached));
       setLoading(false);
@@ -40,7 +42,7 @@ export default function BrowseCompanies() {
       });
       const companies = Array.from(companyMap.values());
       setCachedCompanies(companies);
-      localStorage.setItem(cacheKey, JSON.stringify(companies));
+      window.localStorage.setItem(cacheKey, JSON.stringify(companies));
       setLoading(false);
     }
   }, []);

@@ -10,7 +10,7 @@ import { User, Mail, Lock, LogIn } from "lucide-react"; // Added LogIn to import
 import Link from "next/link";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+export const dynamic = 'force-dynamic';
 export default function CandidateRegister() {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState(null);
@@ -31,11 +31,12 @@ export default function CandidateRegister() {
       const response = await axios.post("http://localhost:5000/api/candidates/register", formData, {
         headers: { "Content-Type": "application/json" },
       });
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
 
       const { user, token } = response.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("userInfo", JSON.stringify({ ...user, token }));
-      localStorage.setItem("userType", "candidate");
+      // window.localStorage.setItem("token", token);
+      // window.localStorage.setItem("userInfo", JSON.stringify({ ...user, token }));
+      // window.localStorage.setItem("userType", "candidate");
 
       toast.success("Registration successful!");
       router.push("/candidate/profile");

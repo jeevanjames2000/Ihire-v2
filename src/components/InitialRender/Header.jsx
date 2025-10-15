@@ -9,27 +9,7 @@ import Link from 'next/link';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-const token = localStorage?.getItem('token');
-console.log(token, "token");
 
-let tokenDecode = null;
-
-if (token) {
-  try {
-    // Split the token and take the payload part
-    const payload = token.split('.')[1];
-
-    // Convert from base64url → base64 (since JWT uses base64url)
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-
-    // Decode base64 and parse JSON
-    tokenDecode = JSON.parse(atob(base64));
-
-    console.log(tokenDecode, "tokenDecode");
-  } catch (error) {
-    console.error("Invalid token format:", error);
-  }
-}
  
   return (
     <motion.header
@@ -55,7 +35,7 @@ if (token) {
           <Button variant="ghost" className={`${theme.buttons.ghost.text} ${theme.buttons.ghost.hoverText}`}>Salary</Button>
         </nav>
         
-        {!tokenDecode?.company_id && (
+       
           <div className="flex items-center space-x-4">
           <Button
             className={`bg-gradient-to-r ${theme.buttons.primary.bg} ${theme.buttons.primary.to} 
@@ -101,9 +81,8 @@ if (token) {
 
           
         </div>
-        )}
-
-       {token && (
+        
+      
           <div className="flex items-center space-x-4">
           <Avatar className="cursor-pointer">
             <AvatarFallback>U</AvatarFallback>
@@ -113,7 +92,7 @@ if (token) {
             <Menu className="h-5 w-5 md:hidden" />
           </Button>
         </div>
-       )}
+      
       </div>
       
       {isMenuOpen && (

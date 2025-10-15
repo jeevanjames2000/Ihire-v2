@@ -273,28 +273,33 @@ const AllApplicants = () => {
     }
   }, [dispatch, userInfo, userType, router]);
 
-  const normalizedApplicants = useMemo(() => {
-    const arrayForm = Array.isArray(applicants) ? applicants : Object.values(applicants).flat();
-    let normalized = arrayForm.map((applicant) => ({
-      ...applicant,
-      skills: Array.isArray(applicant.skills)
-        ? applicant.skills
-        : applicant.skills?.replace(/["]/g, '').split(',') || [],
-      resume: applicant.resume?.replace(/\\/g, '/'),
-      coverLetter: applicant.coverLetter?.replace(/\\/g, '/'),
-      status: applicant.status || 'Pending',
-    }));
+// Compute normalized applicants without side effects
+const normalizedApplicants = useMemo(() => {
+  const arrayForm = Array.isArray(applicants) ? applicants : Object.values(applicants).flat();
+  const normalized = arrayForm.map((applicant) => ({
+    ...applicant,
+    skills: Array.isArray(applicant.skills)
+      ? applicant.skills
+      : applicant.skills?.replace(/["]/g, '').split(',') || [],
+    resume: applicant.resume?.replace(/\\/g, '/'),
+    coverLetter: applicant.coverLetter?.replace(/\\/g, '/'),
+    status: applicant.status || 'Pending',
+  }));
 
-    const uniqueMap = new Map();
-    normalized = normalized.filter((applicant) => {
-      if (uniqueMap.has(applicant.id)) return false;
-      uniqueMap.set(applicant.id, true);
-      return true;
-    });
+  // Remove duplicates
+  const uniqueMap = new Map();
+  return normalized.filter((applicant) => {
+    if (uniqueMap.has(applicant.id)) return false;
+    uniqueMap.set(applicant.id, true);
+    return true;
+  });
+}, [applicants]);
 
-    setLocalApplicants(normalized);
-    return normalized;
-  }, [applicants]);
+// Initialize localApplicants once
+useEffect(() => {
+  setLocalApplicants(normalizedApplicants);
+}, [normalizedApplicants]);
+
 
   const handleApplicantAction = async (applicant, newStatus) => {
     try {

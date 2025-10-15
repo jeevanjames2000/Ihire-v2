@@ -20,7 +20,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     // This code will only run on the client side
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+    const savedTheme = window.localStorage.getItem("theme") as Theme | null;
     const initialTheme = savedTheme || "light"; // Default to light theme
 
     setTheme(initialTheme);
@@ -29,7 +31,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (isInitialized) {
-      localStorage.setItem("theme", theme);
+      window.localStorage.setItem("theme", theme);
       if (theme === "dark") {
         document.documentElement.classList.add("dark");
       } else {

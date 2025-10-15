@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { MapPin, DollarSign, Briefcase, Bookmark, ChevronRight, Filter, Users, Building2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-
+export const dynamic = 'force-dynamic';
 export default function JobDetailPage({ params: paramsPromise }) {
   const params = use(paramsPromise);
   const { id } = params || {};
@@ -27,7 +27,7 @@ export default function JobDetailPage({ params: paramsPromise }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('savedJobs');
+        const saved = window.localStorage.getItem('savedJobs');
         if (saved) {
           setSavedJobs(new Set(JSON.parse(saved)));
         }
@@ -41,7 +41,7 @@ export default function JobDetailPage({ params: paramsPromise }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('savedJobs', JSON.stringify([...savedJobs]));
+        window.localStorage.setItem('savedJobs', JSON.stringify([...savedJobs]));
       } catch (err) {
         console.error('Error saving savedJobs to localStorage:', err);
       }

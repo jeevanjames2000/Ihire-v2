@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Building2, ArrowLeft, ArrowRight, Eye, EyeOff, X } from "lucide-react";
-
+export const dynamic = 'force-dynamic';
 export default function EmployerRegister() {
   const [step, setStep] = useState(1);
   const [userId, setUserId] = useState(null);
@@ -144,7 +144,9 @@ export default function EmployerRegister() {
       });
       const { companyId, company,token } = res.data || {};
     if (token) {
-      localStorage.setItem("token", token);
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+      // window.localStorage.setItem("token", token);
     }
     
 router.push("/recruiterDashboard");

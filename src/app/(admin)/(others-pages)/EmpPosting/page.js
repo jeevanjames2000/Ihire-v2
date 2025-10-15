@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-
+export const dynamic = 'force-dynamic';
 const CreateJob = () => {
   const dispatch = useDispatch();
   const router = useRouter();

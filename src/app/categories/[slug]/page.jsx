@@ -1,7 +1,7 @@
 'use client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-
+export const dynamic = 'force-dynamic';
 export default function CategoryPage({ params, searchParams }) {
   const slug = params?.slug;      
 const search =useSearchParams()

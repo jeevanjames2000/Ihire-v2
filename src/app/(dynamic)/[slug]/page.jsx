@@ -16,6 +16,7 @@ import {
   Users
 } from 'lucide-react';
 import jobData from '@/lib/database/jobs.json';
+export const dynamic = 'force-dynamic';
 export default function JobListings({ params }) {
   const { slug } =  React.use(params);
   const cleanSlug = slug ? slug.replace('-jobs', '') : '';
@@ -30,7 +31,9 @@ export default function JobListings({ params }) {
   const [savedJobs, setSavedJobs] = useState(new Set());
   useEffect(() => {
   const cacheKey = `jobs_${cleanSlug}`;
-  const cached = localStorage.getItem(cacheKey);
+        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
+
+  const cached = window.localStorage.getItem(cacheKey);
     let jobsToLoad = [];
     if (cleanSlug === 'jobs') {
       jobsToLoad = Object.values(jobData).flat();
@@ -39,7 +42,7 @@ export default function JobListings({ params }) {
     }
     setCachedJobs(jobsToLoad);
     if (jobsToLoad.length > 0) setSelectedJobId(jobsToLoad[0].id);
-    localStorage.setItem(cacheKey, JSON.stringify(jobsToLoad));
+    window.localStorage.setItem(cacheKey, JSON.stringify(jobsToLoad));
     setLoading(false);
 }, [cleanSlug]);
   const jobs = useMemo(() => cachedJobs || [], [cachedJobs]);

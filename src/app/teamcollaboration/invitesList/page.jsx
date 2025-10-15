@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, Building2 } from "lucide-react";
-
+export const dynamic = 'force-dynamic';
 export default function CompanyInviteList() {
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ export default function CompanyInviteList() {
 
   const API_BASE = "http://localhost:5000/api/invites";
   const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    "gbumba";
 
 
   useEffect(() => {
