@@ -44,7 +44,7 @@ export default function EmployerRegister() {
     if (step === 1 && userId) {
       const fetchUserData = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/api/employer/${userId}`);
+          const response = await axios.get(`http://localhost:5000/api/recruiter/${userId}`);
           setUserData((prev) => ({
             ...prev,
             name: response.data.name || "",
@@ -101,12 +101,12 @@ export default function EmployerRegister() {
     try {
       let response;
       if (isUpdating && userId) {
-        response = await axios.patch("http://localhost:5000/api/employer/update-user", {
+        response = await axios.patch("http://localhost:5000/api/recruiter/update-user", {
           userId,
           ...userData,
         });
       } else {
-        response = await axios.post("http://localhost:5000/api/employer/register", userData);
+        response = await axios.post("http://localhost:5000/api/recruiter/register", userData);
         setUserId(response.data.user?.id);
       }
       setStep(2);
@@ -139,7 +139,7 @@ export default function EmployerRegister() {
       if (logoFile) formData.append("logo", logoFile);
       if (bannerFile) formData.append("banner", bannerFile);
 
-     const res= await axios.post("http://localhost:5000/api/employer/company", formData, {
+     const res= await axios.post("http://localhost:5000/api/recruiter/company", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const { companyId, company,token } = res.data || {};

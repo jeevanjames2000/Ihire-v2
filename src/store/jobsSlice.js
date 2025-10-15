@@ -47,9 +47,9 @@ export const fetchJobs = createAsyncThunk(
   ) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/jobs/getAllJobs`, // Match backend POST endpoint
+        `http://localhost:5000/api/jobs/all`, // Match backend POST endpoint
         {
-          companyId,
+          companyId :"1",
           statusFilter,
           searchQuery,
           page,

@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 
 function TagsInput({ value = [], onChange, placeholder = 'Add tag' }) {
   const [text, setText] = useState('');
@@ -60,12 +58,14 @@ function TagsInput({ value = [], onChange, placeholder = 'Add tag' }) {
 
 export default function CreateJobPage() {
   const [description, setDescription] = useState('');
-  const [responsibilities, setResponsibilities] = useState(''); // New state for responsibilities
+  const [responsibilities, setResponsibilities] = useState('');
   const [industries, setIndustries] = useState([]);
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [qualificationCategories, setQualificationCategories] = useState([]);
   const [qualificationSubcategories, setQualificationSubcategories] = useState([]);
+  const [companies, setCompanies] = useState([]);
+
   const [errors, setErrors] = useState({
     industry_id: '',
     category_id: '',
@@ -78,7 +78,6 @@ export default function CreateJobPage() {
     company_id: '',
     title: '',
     role: '',
-    function_area: '',
     location: '',
     employment_type: 'Full-time',
     experience_min: '',
@@ -89,14 +88,13 @@ export default function CreateJobPage() {
     vacancies: 1,
     education: '',
     industry: '',
-    responsibilities: '', // Will store HTML from ReactQuill
+    responsibilities: '',
     qualifications: '',
+    description: '',
     skills: [],
     labels: [],
     questions: [],
     walkin_details: null,
-    receive_matching_email: false,
-    share_with_subusers: false,
     industry_id: '',
     category_id: '',
     subcategory_id: '',
@@ -110,31 +108,52 @@ export default function CreateJobPage() {
   const [msg, setMsg] = useState('');
   const [previewHtml, setPreviewHtml] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [userId, setId] = useState(null);
+  console.log("userID",userId)
 
-  // Quill modules configuration
-  const quillModules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link'],
-      ['clean'],
-    ],
-  };
 
-  // Quill formats
-  const quillFormats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'list',
-    'bullet',
-    'link',
-  ];
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return; 
+      const token = window.localStorage.getItem('token');
+      if (!token) return;
+      const payloadBase64 = token.split('.')[1];
+      if (!payloadBase64) return;
+      const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      const tokenDecode = JSON.parse(jsonPayload);
+      if (tokenDecode?.userId) {
+        setId(tokenDecode.userId);
+      } else if (tokenDecode?.userId) {
+        setId(tokenDecode.userId); 
+      }
+    } catch (err) {
+      console.warn('Failed to decode token from localStorage', err);
+    }
+  }, []);
 
-  // Fetch industries
+  
+  useEffect(() => {
+    if (userId) {
+      fetch(`http://localhost:5000/api/recruiter/${userId}/companies`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setCompanies(data || 
+          1
+        ))
+        .catch((error) => console.error('Error fetching companies:', error));
+    }
+  }, [userId]);
+
+  
   useEffect(() => {
     fetch('http://localhost:5000/api/industries')
       .then((res) => res.json())
@@ -142,7 +161,7 @@ export default function CreateJobPage() {
       .catch((error) => console.error('Error fetching industries:', error));
   }, []);
 
-  // Fetch categories based on industry
+
   useEffect(() => {
     if (form.industry_id) {
       fetch(`http://localhost:5000/api/industries/${form.industry_id}/categories`)
@@ -157,7 +176,7 @@ export default function CreateJobPage() {
     }
   }, [form.industry_id]);
 
-  // Fetch subcategories based on category
+ 
   useEffect(() => {
     if (form.category_id) {
       fetch(
@@ -172,21 +191,20 @@ export default function CreateJobPage() {
     }
   }, [form.category_id]);
 
-  // Fetch qualification categories
   useEffect(() => {
     fetch('http://localhost:5000/api/qualifications')
       .then((res) => res.json())
-      .then((data) =>
-        setQualificationCategories(
-          data.filter((q) => q.subcategory === null || q.subcategory === '')
-        )
-      )
-      .catch((error) =>
-        console.error('Error fetching qualification categories:', error)
-      );
+      .then((data) => {
+        const uniqueCategories = [...new Set(data.map((item) => item.category))].map((category) => ({
+          id: data.find((item) => item.category === category).id,
+          category,
+        }));
+        setQualificationCategories(uniqueCategories);
+      })
+      .catch((error) => console.error('Error fetching qualification categories:', error));
   }, []);
 
-  // Fetch qualification subcategories based on selected category
+
   useEffect(() => {
     if (form.qualification_category_id) {
       fetch(
@@ -239,6 +257,14 @@ export default function CreateJobPage() {
       setMsg('Job title required');
       return;
     }
+    if (!form.responsibilities || !form.responsibilities.trim()) {
+      setMsg('Responsibilities required');
+      return;
+    }
+    if (!form.description || !form.description.trim()) {
+      setMsg('Job description required');
+      return;
+    }
     if (!form.qualification_category_id) {
       setMsg('Qualification category required');
       setErrors((prev) => ({
@@ -260,8 +286,8 @@ export default function CreateJobPage() {
 
     const payload = {
       ...form,
-      description: { html: description || '' }, // Send HTML content
-      responsibilities: responsibilities || '', // Send HTML content
+      description: form.description || '',
+      responsibilities: form.responsibilities || '',
       experience_min: form.experience_min ? Number(form.experience_min) : null,
       experience_max: form.experience_max ? Number(form.experience_max) : null,
       salary_min: form.salary_min ? Number(form.salary_min) : null,
@@ -308,13 +334,12 @@ export default function CreateJobPage() {
   }
 
   function preview() {
-    // Combine description and responsibilities for preview
     const combinedHtml = `
       <div>
         <h3>Job Description</h3>
-        ${description || '<p><i>No description</i></p>'}
+        <p>${description || '<i>No description</i>'}</p>
         <h3>Responsibilities</h3>
-        ${responsibilities || '<p><i>No responsibilities</i></p>'}
+        <p>${responsibilities || '<i>No responsibilities</i>'}</p>
       </div>
     `;
     setPreviewHtml(combinedHtml);
@@ -329,8 +354,10 @@ export default function CreateJobPage() {
           <div className="mt-1 flex items-center gap-3">
             <div className="flex-1">
               <select
-                className="w-full rounded border border-gray-200 p-2 bg-gray-50"
+                name="company_id"
                 value={storedCompany.id}
+                onChange={handleChange}
+                className="w-full rounded border border-gray-200 p-2 bg-gray-50"
                 disabled
               >
                 <option value={storedCompany.id}>{storedCompany.name}</option>
@@ -353,14 +380,21 @@ export default function CreateJobPage() {
 
     return (
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Company ID</label>
-        <input
-          value={form.company_id || ''}
-          onChange={(e) => setForm((s) => ({ ...s, company_id: e.target.value }))}
-          placeholder="Enter company ID or register a company"
-          required
+        <label className="block text-sm font-medium text-gray-700">Company</label>
+        <select
+          name="company_id"
+          value={form.company_id}
+          onChange={handleChange}
           className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
-        />
+          required
+        >
+          <option value="">Select Company</option>
+          {companies?.map((company) => (
+            <option key={company.id} value={company.id}>
+              {company.name}
+            </option>
+          ))}
+        </select>
         <div className="mt-2 text-sm text-gray-500">
           Don't have a company?{' '}
           <a href="/register-company" className="text-indigo-600 underline">
@@ -410,18 +444,6 @@ export default function CreateJobPage() {
               <input
                 value={form.role}
                 onChange={(e) => setForm((s) => ({ ...s, role: e.target.value }))}
-                className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Function / Area
-              </label>
-              <input
-                value={form.function_area}
-                onChange={(e) =>
-                  setForm((s) => ({ ...s, function_area: e.target.value }))
-                }
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
@@ -505,7 +527,7 @@ export default function CreateJobPage() {
                 className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
-            <div className="md:col-span-3 flex flex-wrap gap-4">
+            <div className="md:col-span-3">
               <label className="inline-flex items-center gap-2 mt-2">
                 <input
                   type="checkbox"
@@ -516,31 +538,6 @@ export default function CreateJobPage() {
                   className="rounded"
                 />
                 <span className="text-sm text-gray-700">Hide salary</span>
-              </label>
-              <label className="inline-flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  checked={form.receive_matching_email}
-                  onChange={(e) =>
-                    setForm((s) => ({
-                      ...s,
-                      receive_matching_email: e.target.checked,
-                    }))
-                  }
-                  className="rounded"
-                />
-                <span className="text-sm text-gray-700">Receive matching applicants</span>
-              </label>
-              <label className="inline-flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  checked={form.share_with_subusers}
-                  onChange={(e) =>
-                    setForm((s) => ({ ...s, share_with_subusers: e.target.checked }))
-                  }
-                  className="rounded"
-                />
-                <span className="text-sm text-gray-700">Share with sub-users</span>
               </label>
             </div>
             <div className="md:col-span-3">
@@ -736,42 +733,27 @@ export default function CreateJobPage() {
               <label className="block text-sm font-medium text-gray-700">
                 Job Description
               </label>
-              <div className="mt-1">
-                <ReactQuill
-                  value={description}
-                  onChange={setDescription}
-                  modules={quillModules}
-                  formats={quillFormats}
-                  placeholder="Enter job description here..."
-                  className="border border-gray-200 rounded focus:ring-2 focus:ring-indigo-100"
-                  style={{ minHeight: '200px' }}
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Tip: Use the toolbar to format the job description (e.g., bold, lists).
-              </p>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter job description here..."
+                className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
+                rows={6}
+                required
+              />
             </div>
             <div className="md:col-span-3">
               <label className="block text-sm font-medium text-gray-700">
                 Responsibilities
               </label>
-              <div className="mt-1">
-                <ReactQuill
-                  value={responsibilities}
-                  onChange={(value) => {
-                    setResponsibilities(value);
-                    setForm((s) => ({ ...s, responsibilities: value }));
-                  }}
-                  modules={quillModules}
-                  formats={quillFormats}
-                  placeholder="Enter responsibilities here..."
-                  className="border border-gray-200 rounded focus:ring-2 focus:ring-indigo-100"
-                  style={{ minHeight: '150px' }}
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Tip: Use the toolbar to format responsibilities (e.g., bullet points).
-              </p>
+              <textarea
+                value={responsibilities}
+                onChange={(e) => setResponsibilities(e.target.value)}
+                placeholder="Enter responsibilities here..."
+                className="mt-1 w-full rounded border border-gray-200 p-2 focus:ring-2 focus:ring-indigo-100"
+                rows={4}
+                required
+              />
             </div>
             <div className="md:col-span-3">
               <label className="block text-sm font-medium text-gray-700">
