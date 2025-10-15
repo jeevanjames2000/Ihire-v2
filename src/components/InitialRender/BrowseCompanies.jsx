@@ -90,6 +90,7 @@ export default function BrowseCompanies() {
                       onError={(e) => {
                         e.target.src = `https://via.placeholder.com/48?text=${company.name.charAt(0)}`;
                       }}
+                      unoptimized
                     />
                   </div>
                   <div>

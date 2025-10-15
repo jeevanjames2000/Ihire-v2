@@ -192,6 +192,8 @@ export default function CompanyProfile({ params }) {
                   onError={(e) => {
                     e.target.src = 'https://via.placeholder.com/1200x200?text=Company+Banner';
                   }}
+                      unoptimized
+
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
