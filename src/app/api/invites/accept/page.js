@@ -2,7 +2,8 @@
 
 'use client';
 import { Suspense } from 'react';
-import AcceptInvite from '@/components/invites/AcceptInvite';
+import AcceptInvite from '../../../../components/invites/AcceptInvite';
+
 
 export const dynamic = 'force-dynamic';
 

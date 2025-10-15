@@ -1,8 +1,9 @@
 'use client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 export const dynamic = 'force-dynamic';
-export default function CategoryPage({ params, searchParams }) {
+export default function CategoryPage({ params:paramsPromise, searchParams }) {
+   const params = use(paramsPromise);
   const slug = params?.slug;      
 const search =useSearchParams()
 const city =search.get("city")

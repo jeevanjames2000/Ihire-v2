@@ -1,6 +1,7 @@
 'use client';
 import { Suspense } from 'react';
-import Register from '@/components/register/Register';
+import Register from '../../../../components/register/Register';
+
 
 export const dynamic = 'force-dynamic';
 

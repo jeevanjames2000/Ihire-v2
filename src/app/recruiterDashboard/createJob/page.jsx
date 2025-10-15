@@ -140,7 +140,7 @@ export default function CreateJobPage() {
   
   useEffect(() => {
     if (userId) {
-      fetch(`http://localhost:5000/api/recruiter/${userId}/companies`, {
+      fetch(`${NEXT_PUBLIC_API_URL}/api/recruiter/${userId}/companies`, {
         headers: {
           'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
@@ -192,7 +192,7 @@ export default function CreateJobPage() {
   }, [form.category_id]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/qualifications')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}api/qualifications`)
       .then((res) => res.json())
       .then((data) => {
         const uniqueCategories = [...new Set(data.map((item) => item.category))].map((category) => ({
@@ -208,7 +208,7 @@ export default function CreateJobPage() {
   useEffect(() => {
     if (form.qualification_category_id) {
       fetch(
-        `http://localhost:5000/api/qualifications/${form.qualification_category_id}/subcategories`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/qualifications/${form.qualification_category_id}/subcategories`
       )
         .then((res) => res.json())
         .then(setQualificationSubcategories)

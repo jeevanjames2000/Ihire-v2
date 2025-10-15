@@ -52,10 +52,9 @@ export default function JobDetailPage({ params: paramsPromise }) {
     async function fetchJobs() {
       try {
         // Hardcoded URLs for testing
-        const jobUrl = `http://localhost:5000/api/jobs/getJobById/${id}`;
-        const allJobsUrl = 'http://localhost:5000/api/jobs/getAllJobs';
-        console.log('Environment variable NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL); // Debug
-        console.log('Fetching job from:', jobUrl); // Debug
+        const jobUrl = `${ process.env.NEXT_PUBLIC_API_URL}api/jobs/getJobById/${id}`;
+        const allJobsUrl = `${ process.env.NEXT_PUBLIC_API_URL}/api/jobs/getAllJobs`;
+
         const jobRes = await fetch(jobUrl, {
           method: 'GET',
           headers: {
@@ -80,7 +79,7 @@ export default function JobDetailPage({ params: paramsPromise }) {
           applicants: jobData.applicants || 0,
         });
 
-        console.log('Fetching all jobs from:', allJobsUrl); // Debug
+        
         const allJobsRes = await fetch(allJobsUrl, {
           method: 'GET',
           headers: {
