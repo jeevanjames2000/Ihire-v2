@@ -27,7 +27,7 @@ const Footer = () => {
               </h3>
               {[
                 { name: "Find Jobs", link: "/jobs" },
-                { name: "Upload Resume", link: "/upload-resume" },
+                // { name: "Upload Resume", link: "/upload-resume" },
                 { name: "Job Alerts", link: "/job-alerts" },
               ].map((item) => (
                 <Link
