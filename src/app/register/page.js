@@ -6,7 +6,9 @@ import { useRouter } from 'next/navigation';
 import theme from '../../../theme.json';
 import Link from 'next/link';
 import { registerUser } from "../../store/authSlice"
+import { useDispatch } from 'react-redux';
 const RegisterForm = () => {
+  const dispatch = useDispatch()
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState({ text: '', type: '' }); 
   const [loading, setLoading] = useState(false);
