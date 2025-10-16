@@ -4,28 +4,28 @@ import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Briefcase, Building2, DollarSign, Clock, Code, BarChart3, TrendingUp, Users } from 'lucide-react';
+import { Search, Briefcase, Building2, DollarSign, Clock, Code, BarChart3, TrendingUp, Users, Zap, Settings, Package, Database, Server } from 'lucide-react';
 import { motion } from 'framer-motion';
-import jobCategories from '@/lib/database/categories.json';
-import jobsData from '@/lib/database/jobs.json';
-import { Zap, Settings, Package, Database, Server } from 'lucide-react';
 import { setSearchTerm } from '@/store/SearchSlice';
-
 export default function Hero() {
   const [searchTerm, setLocalSearchTerm] = useState('');
   const [open, setOpen] = useState(false);
   const [searchHistory, setSearchHistory] = useState([]);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+   const [jobs, setJobs] = useState([]);
   const containerRef = useRef(null);
   const router = useRouter();
   const dispatch = useDispatch();
-
+  const iconMap = { Code, BarChart3, Zap, Users, TrendingUp, DollarSign, Settings, Package, Database, Server };
+  const iconsList = [Code, BarChart3, Users, Zap, DollarSign, TrendingUp, Package, Database, Server];
   const commonActions = [
     { value: '/jobs', label: 'Jobs', icon: Briefcase },
     { value: '/companies', label: 'Companies', icon: Building2 },
     { value: '/profile', label: 'Profile', icon: DollarSign },
   ];
-
   const dynamicPlaceholders = [
     'React developer jobs in Hyderabad',
     'UI/UX designer jobs',
@@ -58,38 +58,64 @@ export default function Hero() {
     'Quality assurance engineer roles',
     'Remote software developer opportunities',
   ];
-
-  const allJobs = Object.values(jobsData).flat();
+  const allJobs = [
+    { id: '1', title: 'Frontend Developer', company: 'Google' },
+    { id: '2', title: 'Data Scientist', company: 'Microsoft' },
+  ];
   const allCompanies = [...new Set(allJobs.map((job) => job.company))];
-  const iconMap = {
-    Code,
-    BarChart3,
-    Zap,
-    Users,
-    TrendingUp,
-    DollarSign,
-    Settings,
-    Package,
-    Database,
-    Server,
-  };
-
+useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/jobs/getAllJobs');
+        if (!res.ok) throw new Error('Failed to fetch jobs');
+        const data = await res.json();
+        setJobs(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchJobs();
+  }, []);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/categories');
+        if (!res.ok) throw new Error('Failed to fetch categories');
+        const data = await res.json();
+        const categoriesWithIcons = data.map((cat, index) => {
+          const slug = cat.name.toLowerCase().replace(/\s+/g, '-');
+          const IconComponent = cat.icon && iconMap[cat.icon] ? iconMap[cat.icon] : iconsList[index % iconsList.length];
+          return {
+            ...cat,
+            slug,
+            title: cat.name,
+            icon: IconComponent,
+            jobs: cat.job_count || '0',
+          };
+        });
+        setCategories(categoriesWithIcons);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
   const addToHistory = (term) => {
     if (term && !searchHistory.includes(term)) {
       const newHist = [term, ...searchHistory].slice(0, 10);
       setSearchHistory(newHist);
-      // window.localStorage.setItem('searchHistory', JSON.stringify(newHist));
     }
   };
-
   const handleSearch = (e) => {
     e.preventDefault();
     dispatch(setSearchTerm(searchTerm));
     addToHistory(searchTerm);
     setOpen(false);
-    router.push(`/jobs?search=${searchTerm}`);
+    router.push(`/${searchTerm}-jobs?search=${searchTerm}`);
   };
-
   const handleCommandSelect = (value) => {
     setOpen(false);
     if (value === '/jobs') {
@@ -103,53 +129,41 @@ export default function Hero() {
       router.push('/profile');
     }
   };
-
   const handleSelect = (item) => {
     setLocalSearchTerm(item.value);
     dispatch(setSearchTerm(item.value));
     setOpen(false);
     router.push(`/jobs?search=${item.value}`);
   };
-
   const handleHistorySelect = (term) => {
     setLocalSearchTerm(term);
     dispatch(setSearchTerm(term));
     setOpen(false);
     router.push(`/jobs?search=${term}`);
   };
-
-  const handleMarqueeClick = (item) => {
-    setLocalSearchTerm(item);
-    dispatch(setSearchTerm(item));
-    setOpen(false);
-    router.push(`/jobs?search=${item}`);
+    const handleMarqueeClick = (company) => {
+    dispatch(setSearchTerm(company));
+    router.push(`/${company}-jobs?search=${company}`);
   };
-
-const handleCategoryClick = (slug) => {
-  // Ensure slug is clean (optional safety)
-  const categoryKey = slug.toLowerCase().replace(/\s+/g, '-');
-
-  setLocalSearchTerm(slug);
-  dispatch(setSearchTerm(slug));
-  setOpen(false);
-  router.push(`/${categoryKey}-jobs?city=hyderabad`);
-};
-
-
+  const handleCategoryClick = (slug) => {
+    const categoryKey = slug.toLowerCase().replace(/\s+/g, '-');
+    setLocalSearchTerm(slug);
+    dispatch(setSearchTerm(slug));
+    setOpen(false);
+    router.push(`/${categoryKey}-jobs?city=hyderabad`);
+  };
   useEffect(() => {
     const hist = window.localStorage.getItem('searchHistory');
     if (hist) {
       setSearchHistory(JSON.parse(hist));
     }
   }, []);
-
   useEffect(() => {
     const interval = setInterval(() => {
       setPlaceholderIndex((prev) => (prev + 1) % dynamicPlaceholders.length);
     }, 2000);
     return () => clearInterval(interval);
   }, []);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
@@ -163,7 +177,6 @@ const handleCategoryClick = (slug) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [open]);
-
   const filteredResults = (() => {
     if (!searchTerm) return [];
     const lowerSearch = searchTerm.toLowerCase();
@@ -193,14 +206,31 @@ const handleCategoryClick = (slug) => {
       }));
     return [...filteredJobs, ...filteredCompanies].slice(0, 10);
   })();
-
   const currentPlaceholder = dynamicPlaceholders[placeholderIndex];
-
   const variants = {
     open: { height: 'auto', opacity: 1 },
     closed: { height: 0, opacity: 0 },
   };
-
+  if (loading) {
+    return (
+      <section className="relative pt-20 pb-25 bg-cover bg-center md:bg-[url('/BANNER3.png')] bg-[url('/MobileBanner.png')]">
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="text-white">Loading categories...</div>
+        </div>
+      </section>
+    );
+  }
+  if (error) {
+    return (
+      <section className="relative pt-20 pb-25 bg-cover bg-center md:bg-[url('/BANNER3.png')] bg-[url('/MobileBanner.png')]">
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="text-red-500">Error: {error}</div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="relative pt-20 pb-25 bg-cover bg-center md:bg-[url('/BANNER3.png')] bg-[url('/MobileBanner.png')]">
       <div className="absolute inset-0 bg-black/40"></div>
@@ -336,40 +366,28 @@ const handleCategoryClick = (slug) => {
             </motion.div>
           </div>
         </motion.form>
-        <motion.div
+       <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
           className="mt-8 overflow-hidden relative w-full bg-transparent py-2"
         >
           <div className="marquee flex gap-8">
-            {[
-              'Google is hiring 50+ engineers',
-              'Apple is hiring product managers',
-              'Meta is hiring data scientists',
-              'Microsoft is hiring UX designers',
-              'Amazon is hiring full stack developers',
-              'Tesla is hiring AI specialists',
-              'Netflix is hiring frontend developers',
-            ]
-              .concat([
-                'Google is hiring 50+ engineers',
-                'Apple is hiring product managers',
-                'Meta is hiring data scientists',
-                'Microsoft is hiring UX designers',
-                'Amazon is hiring full stack developers',
-                'Tesla is hiring AI specialists',
-                'Netflix is hiring frontend developers',
-              ])
-              .map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleMarqueeClick(item)}
-                  className="text-white text-sm font-medium px-4 py-1 bg-[#48adb9]/20 rounded-full whitespace-nowrap hover:bg-[#48adb9]/30 transition-colors"
-                >
-                  {item}
-                </button>
-              ))}
+            {jobs
+              .map((job) => `${job.company} is hiring ${job.title}`)
+              .concat(jobs.map((job) => `${job.company} is hiring ${job.title}`))
+              .map((item, index) => {
+                const companyName = item.split(' is hiring')[0];
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleMarqueeClick(companyName)}
+                    className="text-white text-sm font-medium px-4 py-1 cursor-pointer bg-[#48adb9]/20 rounded-full whitespace-nowrap hover:bg-[#48adb9]/30 transition-colors"
+                  >
+                    {item}
+                  </button>
+                );
+              })}
           </div>
         </motion.div>
         <motion.div
@@ -378,14 +396,14 @@ const handleCategoryClick = (slug) => {
           transition={{ delay: 0.8 }}
           className="mt-12 flex flex-wrap justify-center gap-2"
         >
-          {jobCategories.map((category) => {
-            const Icon = iconMap[category.icon];
+          {categories.slice(0, 8).map((category) => {
+            const Icon = category.icon;
             if (!Icon) return null;
             return (
               <button
-                key={category.title}
+                key={category.slug}
                 onClick={() => handleCategoryClick(category.slug)}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-white cursor-pointer bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300"
               >
                 <Icon className="h-4 w-4" />
                 <span>{category.title}</span>

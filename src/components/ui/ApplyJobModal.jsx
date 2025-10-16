@@ -513,6 +513,7 @@ const ApplyJobModal = ({ jobId, isOpen, onClose }) => {
           <>
            
             <DialogHeader className="px-6 pt-6">
+              
               <DialogTitle className="text-2xl font-bold text-slate-900">
                 Apply for {job.title}
               </DialogTitle>
