@@ -1,50 +1,75 @@
 'use client';
 import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import jobData from '@/lib/database/jobs.json';
+import theme from '../../../theme.json';
 export default function BrowseCompanies() {
   const router = useRouter();
   const [cachedCompanies, setCachedCompanies] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   useEffect(() => {
     const cacheKey = 'companies';
-        if (typeof window === 'undefined') return; // extra guard (not necessary in useEffect but safe)
-
+    if (typeof window === 'undefined') return;
     const cached = window.localStorage.getItem(cacheKey);
     if (cached) {
       setCachedCompanies(JSON.parse(cached));
       setLoading(false);
-    } else {
-      const allJobs = Object.values(jobData).flat();
-      const companyMap = new Map();
-      allJobs.forEach((job) => {
-        if (!companyMap.has(job.company)) {
-          companyMap.set(job.company, {
-            id: job.companyId || job.company.toLowerCase().replace(/\s+/g, '-'),
-            name: job.company,
-            logo: job.logo,
-            jobs: 1,
-            description: job.companyDescription || `Join ${job.company} to work on exciting projects!`,
-            banner: job.companyBanner || 'https://via.placeholder.com/1200x200?text=Company+Banner',
-            about: job.companyAbout || `${job.company} is a leading company in its industry, dedicated to innovation and excellence.`,
-            location: job.companyLocation || job.location,
-            website: job.companyWebsite || `https://${job.company.toLowerCase().replace(/\s+/g, '')}.com`,
-          });
-        } else {
-          const company = companyMap.get(job.company);
-          company.jobs += 1;
-        }
-      });
-      const companies = Array.from(companyMap.values());
-      setCachedCompanies(companies);
-      window.localStorage.setItem(cacheKey, JSON.stringify(companies));
-      setLoading(false);
+      return;
     }
+    const fetchCompaniesAndJobs = async () => {
+      try {
+        const companiesRes = await fetch('http://localhost:5000/api/companies/getAllCompanies');
+        if (!companiesRes.ok) throw new Error('Failed to fetch companies');
+        const companiesData = await companiesRes.json();
+        const jobsRes = await fetch('http://localhost:5000/api/jobs/getAllJobs');
+        if (!jobsRes.ok) throw new Error('Failed to fetch jobs');
+        const jobsData = await jobsRes.json();
+        const companyJobCounts = new Map();
+        (jobsData.jobs || []).forEach((job) => {
+          if (companyJobCounts.has(job.company)) {
+            companyJobCounts.set(job.company, companyJobCounts.get(job.company) + 1);
+          } else {
+            companyJobCounts.set(job.company, 1);
+          }
+        });
+        const companies = companiesData.map((company) => {
+          let logoUrl;
+          if (company.logo_url) {
+            logoUrl = company.logo_url;
+          } else if (company.website) {
+            const domain = company.website.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            logoUrl = `https://logo.clearbit.com/${domain}`;
+          } else {
+            const domain = company.name.toLowerCase().replace(/\s+/g, '');
+            logoUrl = `https://logo.clearbit.com/${domain}.com`;
+          }
+          return {
+            id: company.id,
+            name: company.name,
+            logo: logoUrl,
+            jobs: companyJobCounts.get(company.name) || 0,
+            description: company.description || `Join ${company.name} to work on exciting projects!`,
+            banner: company.banner_url || 'https://via.placeholder.com/1200x200?text=Company+Banner',
+            about: company.description || `${company.name} is a leading company in its industry.`,
+            location: company.location || 'Unknown Location',
+            website: company.website || `https://${company.name.toLowerCase().replace(/\s+/g, '')}.com`,
+          };
+        });
+        setCachedCompanies(companies);
+        window.localStorage.setItem(cacheKey, JSON.stringify(companies));
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+    fetchCompaniesAndJobs();
   }, []);
   const companies = useMemo(() => cachedCompanies || [], [cachedCompanies]);
   if (loading) {
@@ -52,6 +77,15 @@ export default function BrowseCompanies() {
       <section className="py-16 bg-gray-100">
         <div className="container mx-auto px-6">
           <div className="text-center text-gray-600">Loading companies...</div>
+        </div>
+      </section>
+    );
+  }
+  if (error) {
+    return (
+      <section className="py-16 bg-gray-100">
+        <div className="container mx-auto px-6">
+          <div className="text-center text-red-600">Error: {error}</div>
         </div>
       </section>
     );
@@ -79,7 +113,6 @@ export default function BrowseCompanies() {
               className="cursor-pointer"
             >
               <Card className="relative h-full bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden">
-                {}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <CardHeader className="flex items-center space-x-4 p-6">
                   <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -90,7 +123,7 @@ export default function BrowseCompanies() {
                       height={48}
                       className="object-contain"
                       onError={(e) => {
-                        e.target.src = `https://via.placeholder.com/48?text=${company.name.charAt(0)}`;
+                        e.target.src = `https://placehold.co/48x48?text=${company.name.charAt(0)}`;
                       }}
                       unoptimized
                     />
@@ -131,7 +164,7 @@ export default function BrowseCompanies() {
           >
             <Button
               variant="default"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className={`bg-gradient-to-r ${theme.buttons.secondary.bg} ${theme.buttons.secondary.to} hover:${theme.buttons.secondary.bgHover} hover:${theme.buttons.secondary.toHover} ${theme.buttons.secondary.text} px-8 py-3 text-lg font-semibold`}
               onClick={() => router.push('/companies/all')}
             >
               See All Companies
