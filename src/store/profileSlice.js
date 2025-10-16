@@ -1,15 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// ✅ Fetch candidate profile
+
 export const fetchProfile = createAsyncThunk(
   "profile/fetchProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.get("http://localhost:5000/api/profile", {
-        headers: { Authorization: `Bearer ${token}` },
+      const { data } = await axios.get("http://localhost:5000/api/user/updateUserProfile", {
       });
+      console.log("data",data)
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch profile");
@@ -17,7 +16,7 @@ export const fetchProfile = createAsyncThunk(
   }
 );
 
-// ✅ Update candidate profile
+
 export const updateProfile = createAsyncThunk(
   "profile/updateProfile",
   async (profileData, { rejectWithValue }) => {
