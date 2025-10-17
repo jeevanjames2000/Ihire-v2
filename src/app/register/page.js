@@ -50,7 +50,7 @@ export default function RegisterForm() {
           type: "success",
         })
         router.push("/")
-        setIsLoading(false)
+        setIsLoading(false)``
       } else if (registerUser.rejected.match(result)) {
         setMessage({ text: result.payload || "Registration failed", type: "error" });
       }
