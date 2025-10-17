@@ -192,7 +192,6 @@ export default function JobListings({ params }) {
     () => filteredJobs.find(job => job.id === selectedJobId) || jobs.find(job => job.id === selectedJobId),
     [selectedJobId, filteredJobs, jobs]
   );
-  console.log("selectedJob: ", selectedJob);
   const clearFilters = () => {
     setSearchQuery('');
     setFilterType('all');
@@ -214,6 +213,7 @@ export default function JobListings({ params }) {
     window.history.pushState({}, '', url);
   };
   const toggleSaveJob = (jobId) => {
+    console.log("jobId",jobId)
     setSavedJobs(prev => {
       const newSet = new Set(prev);
       if (newSet.has(jobId)) {

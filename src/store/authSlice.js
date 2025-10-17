@@ -43,7 +43,7 @@ export const logoutUser = createAsyncThunk(
     const { auth } = getState();
     const token = auth.token;
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/logout`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/user/logout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ export const logoutUser = createAsyncThunk(
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Logout failed');
-      return data; // Return data if needed (e.g., success message)
+      return data;
     } catch (err) {
       return rejectWithValue(err.message);
     }
